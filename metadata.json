@@ -1,0 +1,6 @@
+{
+  "name": "BETZ",
+  "description": "Gamified, peer-verified habit challenge app featuring a streak validation engine, check-ins, peer dispute-approval cycles, and live leaderboard systems.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
