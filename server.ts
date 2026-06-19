@@ -10,9 +10,9 @@ async function startServer() {
   // Body Parsing Middlewares
   app.use(express.json());
 
-  // Log in-coming API requests
+  // Log in-coming API requests (excluding read-only polling GET requests)
   app.use((req, res, next) => {
-    if (req.path.startsWith('/api') && req.path !== '/api/system/logs') {
+    if (req.path.startsWith('/api') && req.path !== '/api/system/logs' && req.method !== 'GET') {
       dbEngine.writeLog('API', `↳ Received request: ${req.method} ${req.path}`);
     }
     next();

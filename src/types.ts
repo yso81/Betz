@@ -39,6 +39,7 @@ export interface CheckIn {
   status: 'PENDING_VERIFICATION' | 'VERIFIED' | 'EXPIRED' | 'DISPUTED';
   timezone_offset: number;
   created_at: string;
+  streak_awarded?: boolean;
   // JOIN helpers
   username?: string;
   challenge_title?: string;

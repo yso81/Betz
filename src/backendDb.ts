@@ -124,7 +124,8 @@ const defaultSchema: DatabaseSchema = {
       text_proof: 'Starting the morning off, already 1L deep! Hydro homies active.',
       status: 'VERIFIED',
       timezone_offset: -240,
-      created_at: new Date(Date.now() - 1 * 86400000 - 4 * 3600000).toISOString() // Yesterday morning
+      created_at: new Date(Date.now() - 1 * 86400000 - 4 * 3600000).toISOString(), // Yesterday morning
+      streak_awarded: true
     },
     {
       id: 'chk-2',
@@ -352,7 +353,8 @@ export class DatabaseEngine {
       text_proof: textProof,
       status: 'PENDING_VERIFICATION',
       timezone_offset: timezoneOffset,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      streak_awarded: false
     };
 
     this.data.check_ins.unshift(newCheckIn);
@@ -440,7 +442,7 @@ export class DatabaseEngine {
     statusUpdated = checkIn.status;
 
     // If flipped to VERIFIED, increment active streaks and award user XP!
-    if (oldStatus !== 'VERIFIED' && statusUpdated === 'VERIFIED') {
+    if (oldStatus !== 'VERIFIED' && statusUpdated === 'VERIFIED' && !checkIn.streak_awarded) {
       const challenger = this.data.users.find(u => u.id === checkIn.user_id);
       const userChallenge = this.data.user_challenges.find(
         uc => uc.user_id === checkIn.user_id && uc.challenge_id === checkIn.challenge_id
@@ -455,8 +457,25 @@ export class DatabaseEngine {
         xpAward = 50;
         challenger.total_xp += xpAward;
         streakIncremented = true;
+        checkIn.streak_awarded = true;
 
         this.writeLog('SUCCESS', `Consensus reached! @${challenger.username}'s checked-in habit was VERIFIED! Incremented Streak to ${userChallenge.current_streak} 🔥. Awarded +50 XP!`);
+      }
+    }
+
+    // Rollback logic: If flipped FROM VERIFIED to DISPUTED (or other non-verified status), revert streak and XP
+    if (oldStatus === 'VERIFIED' && statusUpdated !== 'VERIFIED' && checkIn.streak_awarded) {
+      const challenger = this.data.users.find(u => u.id === checkIn.user_id);
+      const userChallenge = this.data.user_challenges.find(
+        uc => uc.user_id === checkIn.user_id && uc.challenge_id === checkIn.challenge_id
+      );
+
+      if (challenger && userChallenge) {
+        userChallenge.current_streak = Math.max(0, userChallenge.current_streak - 1);
+        challenger.total_xp = Math.max(0, challenger.total_xp - 50);
+        checkIn.streak_awarded = false;
+
+        this.writeLog('ERROR', `@${verifier.username} disputed verification for @${challenger.username}'s check-in! Rolled back streak to ${userChallenge.current_streak} and deducted 50 XP.`);
       }
     }
 
