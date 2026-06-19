@@ -11,7 +11,7 @@ import {
 const HABIT_PRESETS = [
   {
     name: 'Hydration Flask',
-    imageUrl: 'https://images.unsplash.com/photo-1548839133-9ac084fa0a0a?auto=format&fit=crop&q=80&w=600',
+    imageUrl: 'https://unsplash.com/photos/person-holding-silver-tube-near-body-of-water-during-daytime-vTEqYBgqcmM?auto=format&fit=crop&q=80&w=600',
     text: 'Met my hydration goals! Fresh cold water, 3L checklist complete.'
   },
   {
@@ -1505,7 +1505,7 @@ export default function App() {
       {/* Footer bar */}
       <footer className="h-12 bg-slate-900 text-slate-500 text-[10px] flex items-center px-6 justify-between mt-8 border-t border-slate-800">
         <div className="flex gap-4">
-          <span>© 2026 BETZ System</span>
+          <span>© 2026 BETZ</span>
           <span className="opacity-40 font-mono">v2.4.0-stable</span>
         </div>
         <div className="flex gap-4 hidden sm:flex">
