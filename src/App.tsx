@@ -11,7 +11,7 @@ import {
 const HABIT_PRESETS = [
   {
     name: 'Hydration Flask',
-    imageUrl: 'https://images.unsplash.com/photo-1550377459-b9a3da59e6cb?auto=format&fit=crop&q=80&w=600',
+    imageUrl: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&q=80&w=600',
     text: 'Met my hydration goals! Fresh cold water, 3L checklist complete.'
   },
   {
