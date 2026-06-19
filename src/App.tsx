@@ -848,6 +848,7 @@ export default function App() {
                                   alt="Habit Proof" 
                                   className="w-full h-full object-cover"
                                   referrerPolicy="no-referrer"
+                                  crossOrigin="anonymous"
                                 />
                                 <div className="absolute top-2 right-2 bg-slate-900/80 backdrop-blur-xs px-2 py-0.5 rounded-lg text-[9px] text-white font-mono font-medium">
                                   Offset: {chk.timezone_offset}m
