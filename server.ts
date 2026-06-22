@@ -80,8 +80,9 @@ async function startServer() {
       const authHeader = req.headers.authorization || '';
       let requesterId = req.body.creator_id;
 
-      if (authHeader.startsWith('Bearer mock-jwt-token-for-')) {
-        requesterId = authHeader.replace('Bearer mock-jwt-token-for-', '');
+      const cleanHeader = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+      if (cleanHeader.startsWith('mock-jwt-token-for-')) {
+        requesterId = cleanHeader.replace('mock-jwt-token-for-', '');
       }
 
       if (!requesterId) {
@@ -121,8 +122,9 @@ async function startServer() {
       const authHeader = req.headers.authorization || '';
       let userId = req.body.user_id;
 
-      if (authHeader.startsWith('Bearer mock-jwt-token-for-')) {
-        userId = authHeader.replace('Bearer mock-jwt-token-for-', '');
+      const cleanHeader = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+      if (cleanHeader.startsWith('mock-jwt-token-for-')) {
+        userId = cleanHeader.replace('mock-jwt-token-for-', '');
       }
 
       if (!userId) {
@@ -162,8 +164,9 @@ async function startServer() {
       const authHeader = req.headers.authorization || '';
       let userId = req.body.user_id;
 
-      if (authHeader.startsWith('Bearer mock-jwt-token-for-')) {
-        userId = authHeader.replace('Bearer mock-jwt-token-for-', '');
+      const cleanHeader = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+      if (cleanHeader.startsWith('mock-jwt-token-for-')) {
+        userId = cleanHeader.replace('mock-jwt-token-for-', '');
       }
 
       if (!userId) {
@@ -201,8 +204,9 @@ async function startServer() {
       const authHeader = req.headers.authorization || '';
       let verifierId = req.body.verifier_id;
 
-      if (authHeader.startsWith('Bearer mock-jwt-token-for-')) {
-        verifierId = authHeader.replace('Bearer mock-jwt-token-for-', '');
+      const cleanHeader = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+      if (cleanHeader.startsWith('mock-jwt-token-for-')) {
+        verifierId = cleanHeader.replace('mock-jwt-token-for-', '');
       }
 
       if (!verifierId) {

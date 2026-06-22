@@ -150,6 +150,24 @@
   ],
   "logs": [
     {
+      "id": "log-82tvzhi5o",
+      "timestamp": "2026-06-22T09:05:59.023Z",
+      "type": "API",
+      "message": "↳ Received request: POST /api/checkins/chk-2/verify"
+    },
+    {
+      "id": "log-jk7nq1qar",
+      "timestamp": "2026-06-22T09:03:41.569Z",
+      "type": "API",
+      "message": "User @yannick authenticated successfully."
+    },
+    {
+      "id": "log-wpxcmidml",
+      "timestamp": "2026-06-22T09:03:41.565Z",
+      "type": "API",
+      "message": "↳ Received request: POST /api/auth/login"
+    },
+    {
       "id": "log-n6d9krt5n",
       "timestamp": "2026-06-22T08:43:29.860Z",
       "type": "API",
@@ -1030,24 +1048,6 @@
       "timestamp": "2026-06-19T06:41:46.650Z",
       "type": "API",
       "message": "↳ Received request: GET /api/users/rc745fbf-4076-4767-8919-48227e7ca4b2/challenges"
-    },
-    {
-      "id": "log-m6wkmvpu7",
-      "timestamp": "2026-06-19T06:41:46.644Z",
-      "type": "API",
-      "message": "↳ Received request: GET /api/feed"
-    },
-    {
-      "id": "log-4e7tb2jff",
-      "timestamp": "2026-06-19T06:41:46.618Z",
-      "type": "API",
-      "message": "↳ Received request: GET /api/feed"
-    },
-    {
-      "id": "log-rvrt4k9hq",
-      "timestamp": "2026-06-19T06:41:46.611Z",
-      "type": "API",
-      "message": "↳ Received request: GET /api/feed"
     }
   ]
 }
