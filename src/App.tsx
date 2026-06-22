@@ -596,9 +596,10 @@ export default function App() {
                 <button
                   key={t.id}
                   onClick={() => setActiveTab(t.id as any)}
+                  style={activeTab === t.id ? { backgroundColor: '#4f46e5' } : undefined}
                   className={`flex items-center gap-3 px-3 py-2.5 text-xs font-semibold rounded-xl transition cursor-pointer ${
                     activeTab === t.id 
-                      ? 'bg-indigo-550 text-white shadow-sm' 
+                      ? 'text-white shadow-sm' 
                       : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                   }`}
                 >
