@@ -150,6 +150,12 @@
   ],
   "logs": [
     {
+      "id": "log-n6d9krt5n",
+      "timestamp": "2026-06-22T08:43:29.860Z",
+      "type": "API",
+      "message": "↳ Received request: POST /api/challenges"
+    },
+    {
       "id": "log-hg4fvs0d2",
       "timestamp": "2026-06-22T07:46:58.429Z",
       "type": "SUCCESS",
@@ -1042,12 +1048,6 @@
       "timestamp": "2026-06-19T06:41:46.611Z",
       "type": "API",
       "message": "↳ Received request: GET /api/feed"
-    },
-    {
-      "id": "log-yo4bvmsvg",
-      "timestamp": "2026-06-19T06:41:46.340Z",
-      "type": "API",
-      "message": "↳ Received request: GET /api/system/state"
     }
   ]
 }

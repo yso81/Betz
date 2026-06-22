@@ -1,8 +1,8 @@
-import fs from 'fs';
 import path from 'path';
+import Database from 'better-sqlite3';
 import { User, Challenge, UserChallenge, CheckIn, Verification, SystemLog } from './types';
 
-const DB_FILE = path.join(process.cwd(), 'db.json');
+const DB_FILE = path.join(process.cwd(), 'db.sqlite');
 
 // Interface for our database layout
 export interface DatabaseSchema {
@@ -168,55 +168,174 @@ const defaultSchema: DatabaseSchema = {
 };
 
 export class DatabaseEngine {
-  private data: DatabaseSchema;
+  private db: Database.Database;
 
   constructor() {
-    this.data = this.load();
+    this.db = new Database(DB_FILE);
+    this.initSchema();
   }
 
-  private load(): DatabaseSchema {
-    try {
-      if (fs.existsSync(DB_FILE)) {
-        const fileContent = fs.readFileSync(DB_FILE, 'utf8');
-        return JSON.parse(fileContent);
-      }
-    } catch (e) {
-      console.error('Error loading database file, fallback to in-memory', e);
+  private initSchema() {
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS users (
+        id TEXT PRIMARY KEY,
+        username TEXT UNIQUE,
+        email TEXT UNIQUE,
+        password_hash TEXT,
+        total_xp INTEGER,
+        created_at TEXT
+      );
+
+      CREATE TABLE IF NOT EXISTS challenges (
+        id TEXT PRIMARY KEY,
+        creator_id TEXT,
+        title TEXT,
+        description TEXT,
+        duration_days INTEGER,
+        frequency TEXT,
+        start_date TEXT,
+        created_at TEXT,
+        FOREIGN KEY(creator_id) REFERENCES users(id)
+      );
+
+      CREATE TABLE IF NOT EXISTS user_challenges (
+        user_id TEXT,
+        challenge_id TEXT,
+        joined_at TEXT,
+        status TEXT,
+        current_streak INTEGER,
+        max_streak INTEGER,
+        PRIMARY KEY (user_id, challenge_id),
+        FOREIGN KEY(user_id) REFERENCES users(id),
+        FOREIGN KEY(challenge_id) REFERENCES challenges(id)
+      );
+
+      CREATE TABLE IF NOT EXISTS check_ins (
+        id TEXT PRIMARY KEY,
+        user_id TEXT,
+        challenge_id TEXT,
+        media_url TEXT,
+        text_proof TEXT,
+        status TEXT,
+        timezone_offset INTEGER,
+        created_at TEXT,
+        streak_awarded INTEGER DEFAULT 0,
+        FOREIGN KEY(user_id) REFERENCES users(id),
+        FOREIGN KEY(challenge_id) REFERENCES challenges(id)
+      );
+
+      CREATE TABLE IF NOT EXISTS verifications (
+        id TEXT PRIMARY KEY,
+        check_in_id TEXT,
+        verifier_id TEXT,
+        vote TEXT,
+        created_at TEXT,
+        FOREIGN KEY(check_in_id) REFERENCES check_ins(id),
+        FOREIGN KEY(verifier_id) REFERENCES users(id)
+      );
+
+      CREATE TABLE IF NOT EXISTS logs (
+        id TEXT PRIMARY KEY,
+        timestamp TEXT,
+        type TEXT,
+        message TEXT
+      );
+    `);
+
+    // If database is empty, seed it
+    const rowCount = this.db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number };
+    if (rowCount.count === 0) {
+      this.seedDatabase(defaultSchema);
     }
-    this.save(defaultSchema);
-    return JSON.parse(JSON.stringify(defaultSchema));
   }
 
-  private save(dataToSave: DatabaseSchema) {
-    try {
-      fs.writeFileSync(DB_FILE, JSON.stringify(dataToSave, null, 2), 'utf8');
-    } catch (e) {
-      console.error('Error writing database to disk', e);
-    }
+  private seedDatabase(schema: DatabaseSchema) {
+    const insertUser = this.db.prepare(`
+      INSERT INTO users (id, username, email, password_hash, total_xp, created_at)
+      VALUES (@id, @username, @email, @password_hash, @total_xp, @created_at)
+    `);
+    const insertChallenge = this.db.prepare(`
+      INSERT INTO challenges (id, creator_id, title, description, duration_days, frequency, start_date, created_at)
+      VALUES (@id, @creator_id, @title, @description, @duration_days, @frequency, @start_date, @created_at)
+    `);
+    const insertUserChallenge = this.db.prepare(`
+      INSERT INTO user_challenges (user_id, challenge_id, joined_at, status, current_streak, max_streak)
+      VALUES (@user_id, @challenge_id, @joined_at, @status, @current_streak, @max_streak)
+    `);
+    const insertCheckIn = this.db.prepare(`
+      INSERT INTO check_ins (id, user_id, challenge_id, media_url, text_proof, status, timezone_offset, created_at, streak_awarded)
+      VALUES (@id, @user_id, @challenge_id, @media_url, @text_proof, @status, @timezone_offset, @created_at, @streak_awarded)
+    `);
+    const insertVerification = this.db.prepare(`
+      INSERT INTO verifications (id, check_in_id, verifier_id, vote, created_at)
+      VALUES (@id, @check_in_id, @verifier_id, @vote, @created_at)
+    `);
+    const insertLog = this.db.prepare(`
+      INSERT INTO logs (id, timestamp, type, message)
+      VALUES (@id, @timestamp, @type, @message)
+    `);
+
+    const transaction = this.db.transaction(() => {
+      schema.users.forEach(u => insertUser.run(u));
+      schema.challenges.forEach(c => insertChallenge.run(c));
+      schema.user_challenges.forEach(uc => insertUserChallenge.run(uc));
+      schema.check_ins.forEach(ci => insertCheckIn.run({
+        ...ci,
+        streak_awarded: ci.streak_awarded ? 1 : 0
+      }));
+      schema.verifications.forEach(v => insertVerification.run(v));
+      schema.logs.forEach(l => insertLog.run(l));
+    });
+
+    transaction();
   }
 
   public getData(): DatabaseSchema {
-    return this.data;
+    const users = this.db.prepare('SELECT * FROM users').all() as User[];
+    const challenges = this.db.prepare('SELECT * FROM challenges').all() as Challenge[];
+    const user_challenges = this.db.prepare('SELECT * FROM user_challenges').all() as UserChallenge[];
+    
+    const dbCheckIns = this.db.prepare('SELECT * FROM check_ins ORDER BY created_at DESC').all() as any[];
+    const check_ins = dbCheckIns.map(ci => ({
+      ...ci,
+      streak_awarded: !!ci.streak_awarded
+    })) as CheckIn[];
+
+    const verifications = this.db.prepare('SELECT * FROM verifications').all() as Verification[];
+    const logs = this.db.prepare('SELECT * FROM logs ORDER BY timestamp DESC').all() as SystemLog[];
+
+    return {
+      users,
+      challenges,
+      user_challenges,
+      check_ins,
+      verifications,
+      logs
+    };
   }
 
   public writeLog(type: 'INFO' | 'API' | 'CRON' | 'SUCCESS' | 'ERROR', message: string) {
-    const newLog: SystemLog = {
-      id: `log-${Math.random().toString(36).substr(2, 9)}`,
-      timestamp: new Date().toISOString(),
-      type,
-      message
-    };
-    this.data.logs.unshift(newLog);
+    const id = `log-${Math.random().toString(36).substr(2, 9)}`;
+    const timestamp = new Date().toISOString();
+    
+    this.db.prepare(`
+      INSERT INTO logs (id, timestamp, type, message)
+      VALUES (?, ?, ?, ?)
+    `).run(id, timestamp, type, message);
+
     // Keep last 150 logs
-    if (this.data.logs.length > 150) {
-      this.data.logs = this.data.logs.slice(0, 150);
+    const logCount = this.db.prepare('SELECT COUNT(*) as count FROM logs').get() as { count: number };
+    if (logCount.count > 150) {
+      // Find the cutoff timestamp
+      const cutoff = this.db.prepare('SELECT timestamp FROM logs ORDER BY timestamp DESC LIMIT 1 OFFSET 149').get() as { timestamp: string };
+      if (cutoff) {
+        this.db.prepare('DELETE FROM logs WHERE timestamp < ?').run(cutoff.timestamp);
+      }
     }
-    this.save(this.data);
   }
 
   public clearLogs() {
-    this.data.logs = [];
-    this.save(this.data);
+    this.db.prepare('DELETE FROM logs').run();
   }
 
   // Auth Operations
@@ -225,7 +344,7 @@ export class DatabaseEngine {
     const formattedEmail = email.toLowerCase().trim();
 
     // Check duplicate
-    const existing = this.data.users.find(u => u.username === formattedUsername || u.email === formattedEmail);
+    const existing = this.db.prepare('SELECT * FROM users WHERE username = ? OR email = ?').get(formattedUsername, formattedEmail) as User | undefined;
     if (existing) {
       throw new Error('Username or email already registered');
     }
@@ -239,15 +358,18 @@ export class DatabaseEngine {
       created_at: new Date().toISOString()
     };
 
-    this.data.users.push(newUser);
+    this.db.prepare(`
+      INSERT INTO users (id, username, email, password_hash, total_xp, created_at)
+      VALUES (@id, @username, @email, @password_hash, @total_xp, @created_at)
+    `).run(newUser);
+
     this.writeLog('SUCCESS', `User created: @${newUser.username} (${newUser.email})`);
-    this.save(this.data);
     return newUser;
   }
 
   public loginUser(usernameOrEmail: string, passwordHash: string): User {
     const term = usernameOrEmail.toLowerCase().trim();
-    const user = this.data.users.find(u => u.username === term || u.email === term);
+    const user = this.db.prepare('SELECT * FROM users WHERE username = ? OR email = ?').get(term, term) as User | undefined;
     
     if (!user) {
       throw new Error('User not found');
@@ -266,7 +388,7 @@ export class DatabaseEngine {
       throw new Error('Duration must be greater than 0');
     }
 
-    const creator = this.data.users.find(u => u.id === creatorId);
+    const creator = this.db.prepare('SELECT * FROM users WHERE id = ?').get(creatorId) as User | undefined;
     if (!creator) {
       throw new Error('Creator user not found');
     }
@@ -282,26 +404,29 @@ export class DatabaseEngine {
       created_at: new Date().toISOString()
     };
 
-    this.data.challenges.push(newChallenge);
+    this.db.prepare(`
+      INSERT INTO challenges (id, creator_id, title, description, duration_days, frequency, start_date, created_at)
+      VALUES (@id, @creator_id, @title, @description, @duration_days, @frequency, @start_date, @created_at)
+    `).run(newChallenge);
+
     this.writeLog('SUCCESS', `New Challenge: "${newChallenge.title}" was declared by @${creator.username}`);
     
     // Automatically make creator join the challenge!
     this.joinChallenge(creatorId, newChallenge.id);
 
-    this.save(this.data);
     return newChallenge;
   }
 
   public joinChallenge(userId: string, challengeId: string): UserChallenge {
-    const user = this.data.users.find(u => u.id === userId);
-    const challenge = this.data.challenges.find(c => c.id === challengeId);
+    const user = this.db.prepare('SELECT * FROM users WHERE id = ?').get(userId) as User | undefined;
+    const challenge = this.db.prepare('SELECT * FROM challenges WHERE id = ?').get(challengeId) as Challenge | undefined;
 
     if (!user || !challenge) {
       throw new Error('User or challenge not found');
     }
 
     // Check if duplicate enrolment
-    const existing = this.data.user_challenges.find(uc => uc.user_id === userId && uc.challenge_id === challengeId);
+    const existing = this.db.prepare('SELECT * FROM user_challenges WHERE user_id = ? AND challenge_id = ?').get(userId, challengeId) as UserChallenge | undefined;
     if (existing) {
       return existing;
     }
@@ -315,17 +440,20 @@ export class DatabaseEngine {
       max_streak: 0
     };
 
-    this.data.user_challenges.push(newMembership);
+    this.db.prepare(`
+      INSERT INTO user_challenges (user_id, challenge_id, joined_at, status, current_streak, max_streak)
+      VALUES (@user_id, @challenge_id, @joined_at, @status, @current_streak, @max_streak)
+    `).run(newMembership);
+
     this.writeLog('INFO', `@${user.username} signed the pledge to join "${challenge.title}"`);
-    this.save(this.data);
     return newMembership;
   }
 
   // Submissions Checkins
   public submitCheckIn(userId: string, challengeId: string, mediaUrl: string, textProof: string, timezoneOffset: number): CheckIn {
-    const user = this.data.users.find(u => u.id === userId);
-    const challenge = this.data.challenges.find(c => c.id === challengeId);
-    const userChallenge = this.data.user_challenges.find(uc => uc.user_id === userId && uc.challenge_id === challengeId);
+    const user = this.db.prepare('SELECT * FROM users WHERE id = ?').get(userId) as User | undefined;
+    const challenge = this.db.prepare('SELECT * FROM challenges WHERE id = ?').get(challengeId) as Challenge | undefined;
+    const userChallenge = this.db.prepare('SELECT * FROM user_challenges WHERE user_id = ? AND challenge_id = ?').get(userId, challengeId) as UserChallenge | undefined;
 
     if (!user || !challenge) {
       throw new Error('User or Challenge resource not found');
@@ -335,12 +463,13 @@ export class DatabaseEngine {
     }
 
     // Simple constraint: Single check_in per user per challenge in a 18-hour window to avoid spamming
-    const eighteenHoursAgo = Date.now() - 18 * 3600 * 1000;
-    const existingSpam = this.data.check_ins.find(
-      c => c.user_id === userId && 
-           c.challenge_id === challengeId && 
-           new Date(c.created_at).getTime() > eighteenHoursAgo
-    );
+    const eighteenHoursAgo = new Date(Date.now() - 18 * 3600 * 1000).toISOString();
+    const existingSpam = this.db.prepare(`
+      SELECT * FROM check_ins 
+      WHERE user_id = ? AND challenge_id = ? AND created_at > ?
+      LIMIT 1
+    `).get(userId, challengeId, eighteenHoursAgo) as CheckIn | undefined;
+
     if (existingSpam) {
       throw new Error('You have already submitted a proof for this challenge recently. Try again in the next cycle.');
     }
@@ -357,9 +486,21 @@ export class DatabaseEngine {
       streak_awarded: false
     };
 
-    this.data.check_ins.unshift(newCheckIn);
+    this.db.prepare(`
+      INSERT INTO check_ins (id, user_id, challenge_id, media_url, text_proof, status, timezone_offset, created_at, streak_awarded)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)
+    `).run(
+      newCheckIn.id,
+      newCheckIn.user_id,
+      newCheckIn.challenge_id,
+      newCheckIn.media_url,
+      newCheckIn.text_proof,
+      newCheckIn.status,
+      newCheckIn.timezone_offset,
+      newCheckIn.created_at
+    );
+
     this.writeLog('SUCCESS', `@${user.username} uploaded physical proof for "${challenge.title}". Pending peer voting.`);
-    this.save(this.data);
     return newCheckIn;
   }
 
@@ -372,24 +513,26 @@ export class DatabaseEngine {
     streak_incremented: boolean;
     awarded_xp: number;
   } {
-    const checkIn = this.data.check_ins.find(c => c.id === checkInId);
-    if (!checkIn) {
+    const checkInRaw = this.db.prepare('SELECT * FROM check_ins WHERE id = ?').get(checkInId) as any;
+    if (!checkInRaw) {
       throw new Error('Target Check-In not found');
     }
+    const checkIn: CheckIn = {
+      ...checkInRaw,
+      streak_awarded: !!checkInRaw.streak_awarded
+    };
 
     if (checkIn.user_id === verifierId) {
       throw new Error('Anti-Cheat Constraint: You are forbidden from voting on your own check-ins!');
     }
 
-    const verifier = this.data.users.find(u => u.id === verifierId);
+    const verifier = this.db.prepare('SELECT * FROM users WHERE id = ?').get(verifierId) as User | undefined;
     if (!verifier) {
       throw new Error('Verifier does not exist');
     }
 
     // Check existing vote
-    const existingVote = this.data.verifications.find(
-      v => v.check_in_id === checkInId && v.verifier_id === verifierId
-    );
+    const existingVote = this.db.prepare('SELECT * FROM verifications WHERE check_in_id = ? AND verifier_id = ?').get(checkInId, verifierId);
     if (existingVote) {
       throw new Error('You have already casted a verification vote for this submission.');
     }
@@ -402,10 +545,13 @@ export class DatabaseEngine {
       vote: voteType,
       created_at: new Date().toISOString()
     };
-    this.data.verifications.push(newVerification);
+    this.db.prepare(`
+      INSERT INTO verifications (id, check_in_id, verifier_id, vote, created_at)
+      VALUES (@id, @check_in_id, @verifier_id, @vote, @created_at)
+    `).run(newVerification);
 
     // Fetch all votes on this check-in
-    const votesOnCheckIn = this.data.verifications.filter(v => v.check_in_id === checkInId);
+    const votesOnCheckIn = this.db.prepare('SELECT * FROM verifications WHERE check_in_id = ?').all() as Verification[];
     const approves = votesOnCheckIn.filter(v => v.vote === 'APPROVE').length;
     const disputes = votesOnCheckIn.filter(v => v.vote === 'DISPUTED').length;
 
@@ -413,20 +559,6 @@ export class DatabaseEngine {
     let streakIncremented = false;
     let xpAward = 0;
 
-    // Consensus Resolution Logic:
-    // When a checking receives a vote, if there are some votes, we determine status.
-    // For a highly dynamic user playground:
-    // If disputes outnumber approvals, status becomes DISPUTED.
-    // If approvals outnumber or match disputes, and we have votes, status becomes VERIFIED.
-    // Let's decide: If vote content is 'DISPUTED', it immediately flips to DISPUTED (re-verifiable if approves comes).
-    // Or simpler: Let the vote decide the status directly.
-    // If the verifier votes DISPUTED, the post status becomes 'DISPUTED'.
-    // If they vote APPROVE:
-    //   If it was PENDING or DISPUTED, and now has positive votes consensus:
-    //     Status becomes VERIFIED.
-    // When status flips from (PENDING_VERIFICATION or DISPUTED) to VERIFIED:
-    //   Reward the author +50 XP and increment their streak!
-    // Let's implement this cleanly:
     const oldStatus = checkIn.status;
     
     if (voteType === 'DISPUTED') {
@@ -441,12 +573,13 @@ export class DatabaseEngine {
 
     statusUpdated = checkIn.status;
 
+    // Update check-in status in SQLite
+    this.db.prepare('UPDATE check_ins SET status = ? WHERE id = ?').run(statusUpdated, checkInId);
+
     // If flipped to VERIFIED, increment active streaks and award user XP!
     if (oldStatus !== 'VERIFIED' && statusUpdated === 'VERIFIED' && !checkIn.streak_awarded) {
-      const challenger = this.data.users.find(u => u.id === checkIn.user_id);
-      const userChallenge = this.data.user_challenges.find(
-        uc => uc.user_id === checkIn.user_id && uc.challenge_id === checkIn.challenge_id
-      );
+      const challenger = this.db.prepare('SELECT * FROM users WHERE id = ?').get(checkIn.user_id) as User | undefined;
+      const userChallenge = this.db.prepare('SELECT * FROM user_challenges WHERE user_id = ? AND challenge_id = ?').get(checkIn.user_id, checkIn.challenge_id) as UserChallenge | undefined;
 
       if (challenger && userChallenge) {
         userChallenge.current_streak += 1;
@@ -459,31 +592,38 @@ export class DatabaseEngine {
         streakIncremented = true;
         checkIn.streak_awarded = true;
 
+        this.db.prepare('UPDATE user_challenges SET current_streak = ?, max_streak = ? WHERE user_id = ? AND challenge_id = ?')
+          .run(userChallenge.current_streak, userChallenge.max_streak, checkIn.user_id, checkIn.challenge_id);
+        this.db.prepare('UPDATE users SET total_xp = ? WHERE id = ?').run(challenger.total_xp, checkIn.user_id);
+        this.db.prepare('UPDATE check_ins SET streak_awarded = 1 WHERE id = ?').run(checkInId);
+
         this.writeLog('SUCCESS', `Consensus reached! @${challenger.username}'s checked-in habit was VERIFIED! Incremented Streak to ${userChallenge.current_streak} 🔥. Awarded +50 XP!`);
       }
     }
 
     // Rollback logic: If flipped FROM VERIFIED to DISPUTED (or other non-verified status), revert streak and XP
     if (oldStatus === 'VERIFIED' && statusUpdated !== 'VERIFIED' && checkIn.streak_awarded) {
-      const challenger = this.data.users.find(u => u.id === checkIn.user_id);
-      const userChallenge = this.data.user_challenges.find(
-        uc => uc.user_id === checkIn.user_id && uc.challenge_id === checkIn.challenge_id
-      );
+      const challenger = this.db.prepare('SELECT * FROM users WHERE id = ?').get(checkIn.user_id) as User | undefined;
+      const userChallenge = this.db.prepare('SELECT * FROM user_challenges WHERE user_id = ? AND challenge_id = ?').get(checkIn.user_id, checkIn.challenge_id) as UserChallenge | undefined;
 
       if (challenger && userChallenge) {
         userChallenge.current_streak = Math.max(0, userChallenge.current_streak - 1);
         challenger.total_xp = Math.max(0, challenger.total_xp - 50);
         checkIn.streak_awarded = false;
 
+        this.db.prepare('UPDATE user_challenges SET current_streak = ? WHERE user_id = ? AND challenge_id = ?')
+          .run(userChallenge.current_streak, checkIn.user_id, checkIn.challenge_id);
+        this.db.prepare('UPDATE users SET total_xp = ? WHERE id = ?').run(challenger.total_xp, checkIn.user_id);
+        this.db.prepare('UPDATE check_ins SET streak_awarded = 0 WHERE id = ?').run(checkInId);
+
         this.writeLog('ERROR', `@${verifier.username} disputed verification for @${challenger.username}'s check-in! Rolled back streak to ${userChallenge.current_streak} and deducted 50 XP.`);
       }
     }
 
     // Award helper participating XP to the verifier for maintaining the social network! (+10 XP)
-    verifier.total_xp += 10;
+    this.db.prepare('UPDATE users SET total_xp = total_xp + 10 WHERE id = ?').run(verifierId);
     this.writeLog('INFO', `@${verifier.username} earned +10 Verification XP for peer evaluation.`);
 
-    this.save(this.data);
     return {
       success: true,
       checkIn,
@@ -499,30 +639,30 @@ export class DatabaseEngine {
     this.writeLog('CRON', 'Streaks Validation Engine: Commencing midnight verification sweep across all regions...');
     let resetsCount = 0;
 
+    const activeUserChallenges = this.db.prepare("SELECT * FROM user_challenges WHERE status = 'ACTIVE'").all() as UserChallenge[];
+
     // For every active user challenge:
-    // A user must have submitted at least one status = 'VERIFIED' status check-in in the last 28 hours (accounting for some timezone buffer)
-    const cutoffTime = Date.now() - 28 * 3600 * 1000;
+    // A user must have submitted at least one status = 'VERIFIED' or 'PENDING_VERIFICATION' status check-in in the last 28 hours
+    const cutoffTime = new Date(Date.now() - 28 * 3600 * 1000).toISOString();
 
-    this.data.user_challenges.forEach(uc => {
-      if (uc.status !== 'ACTIVE') return;
-
-      const user = this.data.users.find(u => u.id === uc.user_id);
-      const challenge = this.data.challenges.find(c => c.id === uc.challenge_id);
+    activeUserChallenges.forEach(uc => {
+      const user = this.db.prepare('SELECT * FROM users WHERE id = ?').get(uc.user_id) as User | undefined;
+      const challenge = this.db.prepare('SELECT * FROM challenges WHERE id = ?').get(uc.challenge_id) as Challenge | undefined;
       if (!user || !challenge) return;
 
       // Find any check-ins in the valid recent window
-      const checkinToday = this.data.check_ins.find(
-        c => c.user_id === uc.user_id &&
-             c.challenge_id === uc.challenge_id &&
-             new Date(c.created_at).getTime() > cutoffTime &&
-             (c.status === 'VERIFIED' || c.status === 'PENDING_VERIFICATION')
-      );
+      const checkinToday = this.db.prepare(`
+        SELECT * FROM check_ins 
+        WHERE user_id = ? AND challenge_id = ? AND created_at > ? AND (status = 'VERIFIED' OR status = 'PENDING_VERIFICATION')
+        LIMIT 1
+      `).get(uc.user_id, uc.challenge_id, cutoffTime) as CheckIn | undefined;
 
       if (!checkinToday) {
         // RESET STREAK!
         const oldStreak = uc.current_streak;
         if (oldStreak > 0) {
-          uc.current_streak = 0;
+          this.db.prepare('UPDATE user_challenges SET current_streak = 0 WHERE user_id = ? AND challenge_id = ?')
+            .run(uc.user_id, uc.challenge_id);
           resetsCount++;
           this.writeLog('ERROR', `RESET: @${user.username} failed check-in for "${challenge.title}" outside boundary. Streak has been reset from ${oldStreak} to 0 ❄️.`);
         }
@@ -531,7 +671,6 @@ export class DatabaseEngine {
 
     const msg = `Streak reset sequence terminated. Evaluated active pledging tables. Total users penalized: ${resetsCount}.`;
     this.writeLog('SUCCESS', msg);
-    this.save(this.data);
     return {
       resetsCount,
       message: msg
@@ -540,20 +679,26 @@ export class DatabaseEngine {
 
   // Reset Sandbox Data to raw pristine state
   public resetSandboxToFactoryDefaults() {
-    this.data = JSON.parse(JSON.stringify(defaultSchema));
-    this.data.logs.unshift({
-      id: `log-${Date.now()}`,
-      timestamp: new Date().toISOString(),
-      type: 'SUCCESS',
-      message: 'Sandbox state restored to system design seed defaults (Yannick, Ryan, Nathanaël).'
-    });
-    this.save(this.data);
-    return this.data;
+    this.db.prepare('DELETE FROM verifications').run();
+    this.db.prepare('DELETE FROM check_ins').run();
+    this.db.prepare('DELETE FROM user_challenges').run();
+    this.db.prepare('DELETE FROM challenges').run();
+    this.db.prepare('DELETE FROM users').run();
+    this.db.prepare('DELETE FROM logs').run();
+
+    this.seedDatabase(defaultSchema);
+
+    this.db.prepare(`
+      INSERT INTO logs (id, timestamp, type, message)
+      VALUES (?, ?, 'SUCCESS', 'Sandbox state restored to system design seed defaults (Yannick, Ryan, Nathanaël).')
+    `).run(`log-${Date.now()}`, new Date().toISOString());
+
+    return this.getData();
   }
 
   // Helper inside database
   private getUsername(userId: string): string {
-    const u = this.data.users.find(x => x.id === userId);
+    const u = this.db.prepare('SELECT username FROM users WHERE id = ?').get(userId) as { username: string } | undefined;
     return u ? u.username : 'anonymous';
   }
 }
