@@ -23,6 +23,14 @@
       "password_hash": "123456",
       "total_xp": 510,
       "created_at": "2026-06-06T10:28:27.612Z"
+    },
+    {
+      "id": "usr-yqoey5bzj",
+      "username": "habit_master",
+      "email": "yannicksookree@gmail.com",
+      "password_hash": "12345",
+      "total_xp": 0,
+      "created_at": "2026-06-22T07:46:58.429Z"
     }
   ],
   "challenges": [
@@ -141,6 +149,18 @@
     }
   ],
   "logs": [
+    {
+      "id": "log-hg4fvs0d2",
+      "timestamp": "2026-06-22T07:46:58.429Z",
+      "type": "SUCCESS",
+      "message": "User created: @habit_master (yannicksookree@gmail.com)"
+    },
+    {
+      "id": "log-53t6354ba",
+      "timestamp": "2026-06-22T07:46:58.424Z",
+      "type": "API",
+      "message": "↳ Received request: POST /api/auth/register"
+    },
     {
       "id": "log-ek2bg1oea",
       "timestamp": "2026-06-19T07:54:32.347Z",
@@ -1028,18 +1048,6 @@
       "timestamp": "2026-06-19T06:41:46.340Z",
       "type": "API",
       "message": "↳ Received request: GET /api/system/state"
-    },
-    {
-      "id": "log-cu3lnjuag",
-      "timestamp": "2026-06-19T06:41:46.324Z",
-      "type": "API",
-      "message": "↳ Received request: GET /api/leaderboard"
-    },
-    {
-      "id": "log-z37r45crl",
-      "timestamp": "2026-06-19T06:41:46.303Z",
-      "type": "API",
-      "message": "↳ Received request: GET /api/users/rc745fbf-4076-4767-8919-48227e7ca4b2/challenges"
     }
   ]
 }

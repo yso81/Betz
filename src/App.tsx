@@ -543,7 +543,7 @@ export default function App() {
       <header className="px-6 py-4 bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <span className="p-2 bg-indigo-650 rounded-xl shadow-md flex items-center justify-center">
+            <span style={{ backgroundColor: '#4f46e5' }} className="p-2 rounded-xl shadow-md flex items-center justify-center">
               <Flame className="w-5 h-5 text-white fill-current animate-pulse" />
             </span>
             <div>
@@ -719,7 +719,8 @@ export default function App() {
                     
                     <button
                       type="submit"
-                      className="w-full bg-indigo-650 hover:bg-indigo-600 text-white font-bold text-xs py-3 rounded-xl transition shadow-md mt-4 cursor-pointer"
+                      style={{ backgroundColor: '#4f46e5' }}
+                      className="w-full text-white font-bold text-xs py-3 rounded-xl transition shadow-md mt-4 cursor-pointer hover:opacity-90"
                     >
                       Enter Habit Arena
                     </button>
@@ -777,7 +778,7 @@ export default function App() {
                     
                     <button
                       type="submit"
-                      className="w-full bg-indigo-650 hover:bg-indigo-600 text-white font-bold text-xs py-3 rounded-xl transition shadow-md mt-4 cursor-pointer"
+                      className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-3 rounded-xl transition shadow-md mt-4 cursor-pointer"
                     >
                       Confirm Pledges & Register
                     </button>
