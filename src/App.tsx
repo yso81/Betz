@@ -11,6 +11,7 @@ export default function App() {
     username: string;
     email: string;
     total_xp: number;
+    badges?: string[];
   } | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
@@ -101,7 +102,8 @@ export default function App() {
               id: freshUser.id,
               username: freshUser.username,
               email: freshUser.email,
-              total_xp: freshUser.total_xp
+              total_xp: freshUser.total_xp,
+              badges: freshUser.badges || []
             };
             setCurrentUser(updated);
             localStorage.setItem('betz_user', JSON.stringify(updated));
@@ -207,24 +209,20 @@ export default function App() {
   // Challenge joins
   const handleJoinChallenge = async (challengeId: string) => {
     if (!token) return;
-    try {
-      const res = await fetch(`/api/challenges/${challengeId}/join`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token
-        },
-        body: JSON.stringify({})
-      });
-      if (res.ok) {
-        fetchData();
-        fetchUserEnrollments();
-      } else {
-        const err = await res.json();
-        alert(err.error || 'Join error');
-      }
-    } catch (e: any) {
-      console.error(e);
+    const res = await fetch(`/api/challenges/${challengeId}/join`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token
+      },
+      body: JSON.stringify({})
+    });
+    if (res.ok) {
+      fetchData();
+      fetchUserEnrollments();
+    } else {
+      const err = await res.json();
+      throw new Error(err.error || 'Join error');
     }
   };
 
@@ -268,24 +266,82 @@ export default function App() {
   // Voting actions
   const handleCastVote = async (checkInId: string, voteType: 'APPROVE' | 'DISPUTED') => {
     if (!token) return;
-    try {
-      const res = await fetch(`/api/checkins/${checkInId}/verify`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token
-        },
-        body: JSON.stringify({ vote: voteType })
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        alert(data.error || 'Vote registration error');
-      } else {
-        fetchData();
-        fetchUserEnrollments();
+    const res = await fetch(`/api/checkins/${checkInId}/verify`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token
+      },
+      body: JSON.stringify({ vote: voteType })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Vote registration error');
+    } else {
+      fetchData();
+      fetchUserEnrollments();
+    }
+  };
+
+  const handleAddComment = async (checkInId: string, message: string) => {
+    if (!token) return;
+    const res = await fetch(`/api/checkins/${checkInId}/comments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token
+      },
+      body: JSON.stringify({ message })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Comment registration error');
+    } else {
+      fetchData();
+    }
+  };
+
+  const handleUpdateProfilePicture = async (avatarUrl: string) => {
+    if (!token) return;
+    const res = await fetch(`/api/users/profile-picture`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token
+      },
+      body: JSON.stringify({ avatar_url: avatarUrl })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Profile picture update error');
+    } else {
+      setCurrentUser(data.user);
+      localStorage.setItem('betz_user', JSON.stringify(data.user));
+      fetchData(); // refresh list to load updated profile photo across the feed & leaderboards
+    }
+  };
+
+  const handlePurchaseStreakFreeze = async (challengeId: string, xpCost: number = 100) => {
+    if (!token) return;
+    const res = await fetch(`/api/challenges/${challengeId}/freeze`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token
+      },
+      body: JSON.stringify({ xp_cost: xpCost })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Streak Freeze purchase failed');
+    } else {
+      if (data.totalXp !== undefined && currentUser) {
+        const updatedUser = { ...currentUser, total_xp: data.totalXp };
+        setCurrentUser(updatedUser);
+        localStorage.setItem('betz_user', JSON.stringify(updatedUser));
       }
-    } catch (e: any) {
-      console.error(e);
+      fetchData();
+      fetchUserEnrollments();
     }
   };
 
@@ -317,11 +373,13 @@ export default function App() {
   };
 
   const handleClearLogs = async () => {
-    try {
-      await fetch('/api/system/clear-logs', { method: 'POST' });
-      fetchData();
-    } catch (e) {
-      console.error(e);
+    if (confirm('Are you sure you want to clear the system logs? This action cannot be undone.')) {
+      try {
+        await fetch('/api/system/clear-logs', { method: 'POST' });
+        fetchData();
+      } catch (e) {
+        console.error(e);
+      }
     }
   };
 
@@ -384,6 +442,9 @@ export default function App() {
             onSubmitCheckin={handleSubmitCheckin}
             onCastVote={handleCastVote}
             onLogout={handleLogout}
+            onAddComment={handleAddComment}
+            onUpdateProfilePicture={handleUpdateProfilePicture}
+            onPurchaseStreakFreeze={handlePurchaseStreakFreeze}
           />
         </section>
 

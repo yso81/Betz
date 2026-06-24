@@ -29,6 +29,7 @@ async function startServer() {
       }
 
       const user = dbEngine.registerUser(username, email, password); // Using password as plain mock bcrypt
+      const badges = dbEngine.evaluateBadges(user.id);
       
       // Return 201 Created as per API spec
       return res.status(201).json({
@@ -38,7 +39,9 @@ async function startServer() {
           id: user.id,
           username: user.username,
           email: user.email,
-          total_xp: user.total_xp
+          total_xp: user.total_xp,
+          badges: badges,
+          avatar_url: user.avatar_url
         }
       });
     } catch (error: any) {
@@ -56,6 +59,7 @@ async function startServer() {
       }
 
       const user = dbEngine.loginUser(usernameOrEmail, password);
+      const badges = dbEngine.evaluateBadges(user.id);
       return res.status(200).json({
         success: true,
         token: `mock-jwt-token-for-${user.id}`,
@@ -63,7 +67,9 @@ async function startServer() {
           id: user.id,
           username: user.username,
           email: user.email,
-          total_xp: user.total_xp
+          total_xp: user.total_xp,
+          badges: badges,
+          avatar_url: user.avatar_url
         }
       });
     } catch (error: any) {
@@ -131,6 +137,29 @@ async function startServer() {
 
       const membership = dbEngine.joinChallenge(userId, challenge_id);
       return res.status(200).json({ success: true, membership });
+    } catch (error: any) {
+      return res.status(400).json({ success: false, error: error.message });
+    }
+  });
+
+  // Purchase Streak Freeze endpoint
+  app.post('/api/challenges/:challenge_id/freeze', (req, res) => {
+    try {
+      const { challenge_id } = req.params;
+      const authHeader = req.headers.authorization || '';
+      let userId = req.body.user_id;
+
+      if (authHeader.startsWith('Bearer mock-jwt-token-for-')) {
+        userId = authHeader.replace('Bearer mock-jwt-token-for-', '');
+      }
+
+      if (!userId) {
+        return res.status(401).json({ success: false, error: 'Unauthorized payload' });
+      }
+
+      const { xp_cost } = req.body;
+      const result = dbEngine.purchaseStreakFreeze(userId, challenge_id, xp_cost ? Number(xp_cost) : 100);
+      return res.status(200).json({ success: true, ...result });
     } catch (error: any) {
       return res.status(400).json({ success: false, error: error.message });
     }
@@ -222,6 +251,73 @@ async function startServer() {
     }
   });
 
+  // Add Comment/Justification to Check-In
+  app.post('/api/checkins/:check_in_id/comments', (req, res) => {
+    try {
+      const { check_in_id } = req.params;
+      const authHeader = req.headers.authorization || '';
+      let userId = req.body.user_id;
+
+      if (authHeader.startsWith('Bearer mock-jwt-token-for-')) {
+        userId = authHeader.replace('Bearer mock-jwt-token-for-', '');
+      }
+
+      if (!userId) {
+        return res.status(401).json({ success: false, error: 'User credentials missing. Please sign in.' });
+      }
+
+      const { message } = req.body;
+      if (!message || message.trim() === '') {
+        return res.status(400).json({ success: false, error: 'Comment message cannot be empty.' });
+      }
+
+      const comment = dbEngine.addCheckInComment(check_in_id, userId, message);
+      return res.status(201).json({
+        success: true,
+        comment
+      });
+    } catch (error: any) {
+      return res.status(400).json({ success: false, error: error.message });
+    }
+  });
+
+  // Update Profile Picture
+  app.post('/api/users/profile-picture', (req, res) => {
+    try {
+      const authHeader = req.headers.authorization || '';
+      let userId = '';
+
+      if (authHeader.startsWith('Bearer mock-jwt-token-for-')) {
+        userId = authHeader.replace('Bearer mock-jwt-token-for-', '');
+      }
+
+      if (!userId) {
+        return res.status(401).json({ success: false, error: 'User credentials missing. Please sign in.' });
+      }
+
+      const { avatar_url } = req.body;
+      if (!avatar_url || avatar_url.trim() === '') {
+        return res.status(400).json({ success: false, error: 'Profile picture URL is required.' });
+      }
+
+      const updatedUser = dbEngine.updateUserAvatar(userId, avatar_url);
+      const badges = dbEngine.evaluateBadges(updatedUser.id);
+      return res.json({
+        success: true,
+        user: {
+          id: updatedUser.id,
+          username: updatedUser.username,
+          email: updatedUser.email,
+          total_xp: updatedUser.total_xp,
+          badges: badges,
+          avatar_url: updatedUser.avatar_url
+        }
+      });
+    } catch (error: any) {
+      return res.status(400).json({ success: false, error: error.message });
+    }
+  });
+
   // Social Feed aggregation
   app.get('/api/feed', (req, res) => {
     try {
@@ -240,8 +336,10 @@ async function startServer() {
         return {
           ...chk,
           username: user ? user.username : 'anonymous',
+          avatar_url: user ? user.avatar_url : undefined,
           challenge_title: challenge ? challenge.title : 'Deleted Challenge',
-          votes: vots
+          votes: vots,
+          comments: chk.comments || []
         };
       });
       return res.json(response);
@@ -261,13 +359,18 @@ async function startServer() {
         const activeStreakMergedSum = Math.max(...participations.map(p => p.current_streak), 0);
         const maxStreakSum = Math.max(...participations.map(p => p.max_streak), 0);
 
+        // Evaluate badges to make sure they are fresh
+        const badges = dbEngine.evaluateBadges(u.id);
+
         return {
           id: u.id,
           username: u.username,
           total_xp: u.total_xp,
           active_streak: activeStreakMergedSum,
           max_streak: maxStreakSum,
-          joined_challenges: participations.length
+          joined_challenges: participations.length,
+          badges: badges,
+          avatar_url: u.avatar_url
         };
       }).sort((a, b) => b.total_xp - a.total_xp); // Primary score index sorting
 

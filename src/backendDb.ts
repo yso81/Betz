@@ -22,7 +22,8 @@ const defaultSchema: DatabaseSchema = {
       email: 'yannick@gmail.com',
       password_hash: '123456', // Easy testing
       total_xp: 450,
-      created_at: new Date(Date.now() - 10 * 86400000).toISOString()
+      created_at: new Date(Date.now() - 10 * 86400000).toISOString(),
+      badges: ['XP Elite', 'Pledge Pioneer', 'First Steps']
     },
     {
       id: 'rc745fbf-4076-4767-8919-48227e7ca4b2',
@@ -30,7 +31,8 @@ const defaultSchema: DatabaseSchema = {
       email: 'ryan@gmail.com',
       password_hash: '123456',
       total_xp: 320,
-      created_at: new Date(Date.now() - 10 * 86400000).toISOString()
+      created_at: new Date(Date.now() - 10 * 86400000).toISOString(),
+      badges: ['First Steps']
     },
     {
       id: 'nc745fbf-4076-4767-8919-48227e7ca4b3',
@@ -38,7 +40,8 @@ const defaultSchema: DatabaseSchema = {
       email: 'nathanael@gmail.com',
       password_hash: '123456',
       total_xp: 510,
-      created_at: new Date(Date.now() - 10 * 86400000).toISOString()
+      created_at: new Date(Date.now() - 10 * 86400000).toISOString(),
+      badges: ['XP Elite', 'Consistency King', 'First Steps']
     }
   ],
   challenges: [
@@ -80,7 +83,8 @@ const defaultSchema: DatabaseSchema = {
       joined_at: new Date(Date.now() - 5 * 86400000).toISOString(),
       status: 'ACTIVE',
       current_streak: 4,
-      max_streak: 4
+      max_streak: 4,
+      streak_freezes: 1
     },
     {
       user_id: 'rc745fbf-4076-4767-8919-48227e7ca4b2',
@@ -88,7 +92,8 @@ const defaultSchema: DatabaseSchema = {
       joined_at: new Date(Date.now() - 5 * 86400000).toISOString(),
       status: 'ACTIVE',
       current_streak: 2,
-      max_streak: 3
+      max_streak: 3,
+      streak_freezes: 0
     },
     {
       user_id: 'nc745fbf-4076-4767-8919-48227e7ca4b3',
@@ -96,7 +101,8 @@ const defaultSchema: DatabaseSchema = {
       joined_at: new Date(Date.now() - 5 * 86400000).toISOString(),
       status: 'ACTIVE',
       current_streak: 5,
-      max_streak: 5
+      max_streak: 5,
+      streak_freezes: 0
     },
     {
       user_id: 'yc745fbf-4076-4767-8919-48227e7ca4b1',
@@ -104,7 +110,8 @@ const defaultSchema: DatabaseSchema = {
       joined_at: new Date(Date.now() - 3 * 86400000).toISOString(),
       status: 'ACTIVE',
       current_streak: 3,
-      max_streak: 3
+      max_streak: 3,
+      streak_freezes: 0
     },
     {
       user_id: 'nc745fbf-4076-4767-8919-48227e7ca4b3',
@@ -112,7 +119,8 @@ const defaultSchema: DatabaseSchema = {
       joined_at: new Date(Date.now() - 1 * 86400000).toISOString(),
       status: 'ACTIVE',
       current_streak: 1,
-      max_streak: 1
+      max_streak: 1,
+      streak_freezes: 0
     }
   ],
   check_ins: [
@@ -145,6 +153,34 @@ const defaultSchema: DatabaseSchema = {
       status: 'PENDING_VERIFICATION',
       timezone_offset: -240,
       created_at: new Date(Date.now() - 1 * 3600000).toISOString() // 1 hour ago
+    },
+    {
+      id: 'chk-4',
+      user_id: 'rc745fbf-4076-4767-8919-48227e7ca4b2', // Ryan
+      challenge_id: 'ch2-morning-run',
+      media_url: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&q=80&w=600',
+      text_proof: 'Did my 5K early today, beautiful sun rising!',
+      status: 'DISPUTED',
+      timezone_offset: -240,
+      created_at: new Date(Date.now() - 3 * 3600000).toISOString(), // 3 hours ago
+      comments: [
+        {
+          id: 'comment-1',
+          check_in_id: 'chk-4',
+          user_id: 'yc745fbf-4076-4767-8919-48227e7ca4b1', // Yannick
+          username: 'yannick',
+          message: 'The photo looks like a stock photo of a forest, not a 5K running proof! Can you post your fitness tracker log?',
+          created_at: new Date(Date.now() - 2.5 * 3600000).toISOString()
+        },
+        {
+          id: 'comment-2',
+          check_in_id: 'chk-4',
+          user_id: 'rc745fbf-4076-4767-8919-48227e7ca4b2', // Ryan
+          username: 'ryan',
+          message: 'Ah, sorry! I forgot to take a selfie at the trail. I just uploaded my favorite trail view. Here is my Garmin workout sync link: https://connect.garmin.com/activity/12345',
+          created_at: new Date(Date.now() - 2 * 3600000).toISOString()
+        }
+      ]
     }
   ],
   verifications: [
@@ -154,6 +190,13 @@ const defaultSchema: DatabaseSchema = {
       verifier_id: 'nc745fbf-4076-4767-8919-48227e7ca4b3', // Nathanaël
       vote: 'APPROVE',
       created_at: new Date(Date.now() - 18 * 3600000).toISOString()
+    },
+    {
+      id: 'v-2',
+      check_in_id: 'chk-4',
+      verifier_id: 'yc745fbf-4076-4767-8919-48227e7ca4b1', // Yannick
+      vote: 'DISPUTED',
+      created_at: new Date(Date.now() - 2.6 * 3600000).toISOString()
     }
   ],
   logs: [
@@ -196,6 +239,64 @@ export class DatabaseEngine {
 
   public getData(): DatabaseSchema {
     return this.data;
+  }
+
+  public evaluateBadges(userId: string): string[] {
+    const user = this.data.users.find(u => u.id === userId);
+    if (!user) return [];
+
+    const oldBadges = user.badges || [];
+    const badges = new Set<string>();
+
+    // 1. XP Elite: Reached >= 400 total XP
+    if (user.total_xp >= 400) {
+      badges.add('XP Elite');
+    }
+
+    // 2. Consistency King: Reached current or max streak of >= 5 on any challenge
+    const participations = this.data.user_challenges.filter(uc => uc.user_id === userId);
+    const maxStreak = Math.max(...participations.map(p => Math.max(p.current_streak, p.max_streak)), 0);
+    if (maxStreak >= 5) {
+      badges.add('Consistency King');
+    }
+
+    // 3. Early Bird: Has at least one check-in submitted before 10:00 AM local time or sunrise challenge
+    const earlyCheckin = this.data.check_ins.some(c => {
+      if (c.user_id !== userId) return false;
+      const date = new Date(c.created_at);
+      const localTime = new Date(date.getTime() - (c.timezone_offset * 60 * 1000));
+      const hours = localTime.getUTCHours();
+      return hours < 10 || c.challenge_id === 'ch2-morning-run';
+    });
+
+    if (earlyCheckin) {
+      badges.add('Early Bird');
+    }
+
+    // 4. Pledge Pioneer: Enrolled in >= 2 challenges
+    const activeParticipations = participations.filter(p => p.status === 'ACTIVE').length;
+    if (activeParticipations >= 2) {
+      badges.add('Pledge Pioneer');
+    }
+
+    // 5. First Steps: Reached >= 1 streak on any challenge
+    if (maxStreak >= 1) {
+      badges.add('First Steps');
+    }
+
+    const badgesArray = Array.from(badges);
+    
+    // Check for newly unlocked badges and write logs
+    const newlyUnlocked = badgesArray.filter(b => !oldBadges.includes(b));
+    if (newlyUnlocked.length > 0) {
+      newlyUnlocked.forEach(badge => {
+        this.writeLog('SUCCESS', `🎉 Congratulations! @${user.username} unlocked a new badge: "${badge}"!`);
+      });
+    }
+
+    user.badges = badgesArray;
+    this.save(this.data);
+    return badgesArray;
   }
 
   public writeLog(type: 'INFO' | 'API' | 'CRON' | 'SUCCESS' | 'ERROR', message: string) {
@@ -259,6 +360,17 @@ export class DatabaseEngine {
     return user;
   }
 
+  public updateUserAvatar(userId: string, avatarUrl: string): User {
+    const user = this.data.users.find(u => u.id === userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    user.avatar_url = avatarUrl;
+    this.writeLog('SUCCESS', `User @${user.username} updated their profile picture.`);
+    this.save(this.data);
+    return user;
+  }
+
   // Challenge Operations
   public createChallenge(creatorId: string, title: string, description: string, durationDays: number, frequency: 'DAILY' | 'WEEKLY', startDateStr?: string): Challenge {
     if (durationDays <= 0) {
@@ -311,11 +423,13 @@ export class DatabaseEngine {
       joined_at: new Date().toISOString(),
       status: 'ACTIVE',
       current_streak: 0,
-      max_streak: 0
+      max_streak: 0,
+      streak_freezes: 0
     };
 
     this.data.user_challenges.push(newMembership);
     this.writeLog('INFO', `@${user.username} signed the pledge to join "${challenge.title}"`);
+    this.evaluateBadges(userId);
     this.save(this.data);
     return newMembership;
   }
@@ -357,6 +471,7 @@ export class DatabaseEngine {
 
     this.data.check_ins.unshift(newCheckIn);
     this.writeLog('SUCCESS', `@${user.username} uploaded physical proof for "${challenge.title}". Pending peer voting.`);
+    this.evaluateBadges(userId);
     this.save(this.data);
     return newCheckIn;
   }
@@ -452,6 +567,12 @@ export class DatabaseEngine {
           userChallenge.max_streak = userChallenge.current_streak;
         }
         
+        const challenge = this.data.challenges.find(c => c.id === checkIn.challenge_id);
+        if (challenge && userChallenge.current_streak >= challenge.duration_days && userChallenge.status !== 'COMPLETED') {
+          userChallenge.status = 'COMPLETED';
+          this.writeLog('SUCCESS', `🏆 CHALLENGE CONQUERED! @${challenger.username} successfully completed all ${challenge.duration_days} days of "${challenge.title}"!`);
+        }
+        
         xpAward = 50;
         challenger.total_xp += xpAward;
         streakIncremented = true;
@@ -464,6 +585,10 @@ export class DatabaseEngine {
     verifier.total_xp += 10;
     this.writeLog('INFO', `@${verifier.username} earned +10 Verification XP for peer evaluation.`);
 
+    // Run badge validation for both participants
+    this.evaluateBadges(checkIn.user_id);
+    this.evaluateBadges(verifierId);
+
     this.save(this.data);
     return {
       success: true,
@@ -473,6 +598,36 @@ export class DatabaseEngine {
       streak_incremented: streakIncremented,
       awarded_xp: xpAward
     };
+  }
+
+  public addCheckInComment(checkInId: string, userId: string, message: string): any {
+    const checkIn = this.data.check_ins.find(c => c.id === checkInId);
+    if (!checkIn) {
+      throw new Error('Target Check-In not found');
+    }
+
+    const user = this.data.users.find(u => u.id === userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    if (!checkIn.comments) {
+      checkIn.comments = [];
+    }
+
+    const newComment = {
+      id: `comment-${Math.random().toString(36).substr(2, 9)}`,
+      check_in_id: checkInId,
+      user_id: userId,
+      username: user.username,
+      message,
+      created_at: new Date().toISOString()
+    };
+
+    checkIn.comments.push(newComment);
+    this.writeLog('INFO', `@${user.username} commented on check-in ${checkInId}: "${message.substring(0, 30)}..."`);
+    this.save(this.data);
+    return newComment;
   }
 
   // Sequence B Reset
@@ -503,9 +658,14 @@ export class DatabaseEngine {
         // RESET STREAK!
         const oldStreak = uc.current_streak;
         if (oldStreak > 0) {
-          uc.current_streak = 0;
-          resetsCount++;
-          this.writeLog('ERROR', `RESET: @${user.username} failed check-in for "${challenge.title}" outside boundary. Streak has been reset from ${oldStreak} to 0 ❄️.`);
+          if (uc.streak_freezes && uc.streak_freezes > 0) {
+            uc.streak_freezes--;
+            this.writeLog('INFO', `❄️ STREAK FREEZE TRIGGERED: @${user.username} missed check-in for "${challenge.title}" but streak of ${oldStreak}d was preserved! Remaining freezes: ${uc.streak_freezes}.`);
+          } else {
+            uc.current_streak = 0;
+            resetsCount++;
+            this.writeLog('ERROR', `RESET: @${user.username} failed check-in for "${challenge.title}" outside boundary. Streak has been reset from ${oldStreak} to 0 ❄️.`);
+          }
         }
       }
     });
@@ -516,6 +676,38 @@ export class DatabaseEngine {
     return {
       resetsCount,
       message: msg
+    };
+  }
+
+  public purchaseStreakFreeze(userId: string, challengeId: string, xpCost: number = 100): { success: boolean; message: string; userChallenge: UserChallenge; totalXp: number } {
+    const user = this.data.users.find(u => u.id === userId);
+    const challenge = this.data.challenges.find(c => c.id === challengeId);
+    const userChallenge = this.data.user_challenges.find(uc => uc.user_id === userId && uc.challenge_id === challengeId);
+
+    if (!user || !challenge) {
+      throw new Error('User or challenge not found');
+    }
+
+    if (!userChallenge) {
+      throw new Error('You must be joined to this challenge to purchase a streak freeze');
+    }
+
+    if (user.total_xp < xpCost) {
+      throw new Error(`Insufficient XP. You need ${xpCost} XP but currently have ${user.total_xp} XP`);
+    }
+
+    // Deduct XP and add streak freeze
+    user.total_xp -= xpCost;
+    userChallenge.streak_freezes = (userChallenge.streak_freezes || 0) + 1;
+
+    this.writeLog('SUCCESS', `❄️ STREAK FREEZE PURCHASED: @${user.username} spent ${xpCost} XP to purchase a Streak Freeze for "${challenge.title}". New XP: ${user.total_xp}.`);
+    this.save(this.data);
+
+    return {
+      success: true,
+      message: `Successfully purchased a Streak Freeze for ${xpCost} XP!`,
+      userChallenge,
+      totalXp: user.total_xp
     };
   }
 

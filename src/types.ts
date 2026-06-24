@@ -5,6 +5,8 @@ export interface User {
   password_hash: string;
   total_xp: number;
   created_at: string;
+  badges?: string[];
+  avatar_url?: string;
 }
 
 export interface Challenge {
@@ -28,6 +30,7 @@ export interface UserChallenge {
   status: 'ACTIVE' | 'COMPLETED' | 'FAILED';
   current_streak: number;
   max_streak: number;
+  streak_freezes?: number;
 }
 
 export interface CheckIn {
@@ -41,7 +44,18 @@ export interface CheckIn {
   created_at: string;
   // JOIN helpers
   username?: string;
+  avatar_url?: string;
   challenge_title?: string;
+  comments?: CheckInComment[];
+}
+
+export interface CheckInComment {
+  id: string;
+  check_in_id: string;
+  user_id: string;
+  username: string;
+  message: string;
+  created_at: string;
 }
 
 export interface Verification {
@@ -69,5 +83,6 @@ export interface AuthResponse {
     username: string;
     email: string;
     total_xp: number;
+    badges?: string[];
   };
 }

@@ -1,0 +1,1061 @@
+{
+  "users": [
+    {
+      "id": "yc745fbf-4076-4767-8919-48227e7ca4b1",
+      "username": "yannick",
+      "email": "yannick@gmail.com",
+      "password_hash": "123456",
+      "total_xp": 450,
+      "created_at": "2026-06-14T06:53:45.060Z",
+      "badges": [
+        "XP Elite",
+        "Early Bird",
+        "Pledge Pioneer",
+        "First Steps"
+      ]
+    },
+    {
+      "id": "rc745fbf-4076-4767-8919-48227e7ca4b2",
+      "username": "ryan",
+      "email": "ryan@gmail.com",
+      "password_hash": "123456",
+      "total_xp": 320,
+      "created_at": "2026-06-14T06:53:45.061Z",
+      "badges": [
+        "Early Bird",
+        "First Steps"
+      ]
+    },
+    {
+      "id": "nc745fbf-4076-4767-8919-48227e7ca4b3",
+      "username": "nathanael",
+      "email": "nathanael@gmail.com",
+      "password_hash": "123456",
+      "total_xp": 510,
+      "created_at": "2026-06-14T06:53:45.061Z",
+      "badges": [
+        "XP Elite",
+        "Consistency King",
+        "Pledge Pioneer",
+        "First Steps"
+      ]
+    }
+  ],
+  "challenges": [
+    {
+      "id": "ch1-daily-water",
+      "creator_id": "nc745fbf-4076-4767-8919-48227e7ca4b3",
+      "title": "Daily Hydration Master",
+      "description": "Drink 3 liters of fresh water daily and post physical proof of your filled flask.",
+      "duration_days": 14,
+      "frequency": "DAILY",
+      "start_date": "2026-06-19T06:53:45.061Z",
+      "created_at": "2026-06-18T06:53:45.061Z"
+    },
+    {
+      "id": "ch2-morning-run",
+      "creator_id": "rc745fbf-4076-4767-8919-48227e7ca4b2",
+      "title": "Early Sunrise Run 5K",
+      "description": "Get moving before 8 AM. Post your fitness app workout summary or trail photo.",
+      "duration_days": 30,
+      "frequency": "DAILY",
+      "start_date": "2026-06-21T06:53:45.061Z",
+      "created_at": "2026-06-20T06:53:45.061Z"
+    },
+    {
+      "id": "ch3-code-master",
+      "creator_id": "yc745fbf-4076-4767-8919-48227e7ca4b1",
+      "title": "Git Commit Streak",
+      "description": "Write code and push commits every day. Post snapshot showing GitHub contribution square green!",
+      "duration_days": 21,
+      "frequency": "DAILY",
+      "start_date": "2026-06-23T06:53:45.061Z",
+      "created_at": "2026-06-22T06:53:45.061Z"
+    }
+  ],
+  "user_challenges": [
+    {
+      "user_id": "yc745fbf-4076-4767-8919-48227e7ca4b1",
+      "challenge_id": "ch1-daily-water",
+      "joined_at": "2026-06-19T06:53:45.061Z",
+      "status": "ACTIVE",
+      "current_streak": 4,
+      "max_streak": 4
+    },
+    {
+      "user_id": "rc745fbf-4076-4767-8919-48227e7ca4b2",
+      "challenge_id": "ch1-daily-water",
+      "joined_at": "2026-06-19T06:53:45.061Z",
+      "status": "ACTIVE",
+      "current_streak": 2,
+      "max_streak": 3
+    },
+    {
+      "user_id": "nc745fbf-4076-4767-8919-48227e7ca4b3",
+      "challenge_id": "ch1-daily-water",
+      "joined_at": "2026-06-19T06:53:45.061Z",
+      "status": "ACTIVE",
+      "current_streak": 5,
+      "max_streak": 5
+    },
+    {
+      "user_id": "yc745fbf-4076-4767-8919-48227e7ca4b1",
+      "challenge_id": "ch2-morning-run",
+      "joined_at": "2026-06-21T06:53:45.061Z",
+      "status": "ACTIVE",
+      "current_streak": 3,
+      "max_streak": 3
+    },
+    {
+      "user_id": "nc745fbf-4076-4767-8919-48227e7ca4b3",
+      "challenge_id": "ch3-code-master",
+      "joined_at": "2026-06-23T06:53:45.061Z",
+      "status": "ACTIVE",
+      "current_streak": 1,
+      "max_streak": 1
+    }
+  ],
+  "check_ins": [
+    {
+      "id": "chk-1",
+      "user_id": "yc745fbf-4076-4767-8919-48227e7ca4b1",
+      "challenge_id": "ch1-daily-water",
+      "media_url": "https://images.unsplash.com/photo-1548839133-9ac084fa0a0a?auto=format&fit=crop&q=80&w=600",
+      "text_proof": "Starting the morning off, already 1L deep! Hydro homies active.",
+      "status": "VERIFIED",
+      "timezone_offset": -240,
+      "created_at": "2026-06-23T02:53:45.061Z"
+    },
+    {
+      "id": "chk-2",
+      "user_id": "rc745fbf-4076-4767-8919-48227e7ca4b2",
+      "challenge_id": "ch1-daily-water",
+      "media_url": "https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&q=80&w=600",
+      "text_proof": "Water bottle filled, adding key vitamins today!",
+      "status": "PENDING_VERIFICATION",
+      "timezone_offset": -240,
+      "created_at": "2026-06-24T04:53:45.061Z"
+    },
+    {
+      "id": "chk-3",
+      "user_id": "yc745fbf-4076-4767-8919-48227e7ca4b1",
+      "challenge_id": "ch2-morning-run",
+      "media_url": "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&q=80&w=600",
+      "text_proof": "5K trail run finished! Beautiful mist at sunrise.",
+      "status": "PENDING_VERIFICATION",
+      "timezone_offset": -240,
+      "created_at": "2026-06-24T05:53:45.061Z"
+    }
+  ],
+  "verifications": [
+    {
+      "id": "v-1",
+      "check_in_id": "chk-1",
+      "verifier_id": "nc745fbf-4076-4767-8919-48227e7ca4b3",
+      "vote": "APPROVE",
+      "created_at": "2026-06-23T12:53:45.061Z"
+    }
+  ],
+  "logs": [
+    {
+      "id": "log-h8f739uex",
+      "timestamp": "2026-06-24T10:00:39.834Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-391b1810d",
+      "timestamp": "2026-06-24T10:00:39.774Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-foe04vdud",
+      "timestamp": "2026-06-24T10:00:39.484Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-p7kz9c4en",
+      "timestamp": "2026-06-24T10:00:39.242Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-49e52hktx",
+      "timestamp": "2026-06-24T10:00:38.650Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-pd6k8s7d3",
+      "timestamp": "2026-06-24T10:00:38.393Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-wzdhotbyt",
+      "timestamp": "2026-06-24T10:00:38.336Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-9uy8v9z32",
+      "timestamp": "2026-06-24T10:00:37.988Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-ykrwtajsr",
+      "timestamp": "2026-06-24T10:00:37.821Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-kjy6d2psp",
+      "timestamp": "2026-06-24T10:00:37.119Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-2uk5tzjo9",
+      "timestamp": "2026-06-24T10:00:36.787Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-atfe1jp87",
+      "timestamp": "2026-06-24T10:00:36.777Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-t7l6yvy2k",
+      "timestamp": "2026-06-24T10:00:36.482Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-ikiegmh0r",
+      "timestamp": "2026-06-24T10:00:36.024Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-dyqwpc405",
+      "timestamp": "2026-06-24T10:00:35.502Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-i60nh7fos",
+      "timestamp": "2026-06-24T10:00:35.306Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-zhiqh11wf",
+      "timestamp": "2026-06-24T10:00:35.247Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-3r9tatcsz",
+      "timestamp": "2026-06-24T10:00:34.979Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-jf94vgdv5",
+      "timestamp": "2026-06-24T10:00:34.665Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-a1q5s29tp",
+      "timestamp": "2026-06-24T10:00:34.159Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-17cr77i66",
+      "timestamp": "2026-06-24T10:00:33.887Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-e8zw0rdef",
+      "timestamp": "2026-06-24T10:00:33.836Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-az87vdgqr",
+      "timestamp": "2026-06-24T10:00:33.500Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-vj1znmkhs",
+      "timestamp": "2026-06-24T10:00:33.133Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-epraew2t0",
+      "timestamp": "2026-06-24T10:00:32.599Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-3irxn4phx",
+      "timestamp": "2026-06-24T10:00:32.347Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-6r90mxvwy",
+      "timestamp": "2026-06-24T10:00:32.292Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-jz53pav0j",
+      "timestamp": "2026-06-24T10:00:31.987Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-w7f7s07h1",
+      "timestamp": "2026-06-24T10:00:31.627Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-zd8hxquzl",
+      "timestamp": "2026-06-24T10:00:31.057Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-1kgv8cgs4",
+      "timestamp": "2026-06-24T10:00:30.811Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-zzd00kyjl",
+      "timestamp": "2026-06-24T10:00:30.781Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-j2c5zremk",
+      "timestamp": "2026-06-24T10:00:30.499Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-pwwgna19w",
+      "timestamp": "2026-06-24T10:00:30.263Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-zctqnazqj",
+      "timestamp": "2026-06-24T10:00:29.632Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-qqs1p7jei",
+      "timestamp": "2026-06-24T10:00:29.382Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-v7vo1p1xj",
+      "timestamp": "2026-06-24T10:00:29.325Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-ioub8d2zu",
+      "timestamp": "2026-06-24T10:00:28.984Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-etyuaj3dm",
+      "timestamp": "2026-06-24T10:00:28.715Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-gcgb4bxpx",
+      "timestamp": "2026-06-24T10:00:28.108Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-zwh0kqf8s",
+      "timestamp": "2026-06-24T10:00:27.806Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-9lvjfod9h",
+      "timestamp": "2026-06-24T10:00:27.777Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-2t5l06kg6",
+      "timestamp": "2026-06-24T10:00:27.485Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-448hdsnfm",
+      "timestamp": "2026-06-24T10:00:27.162Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-pow554jpo",
+      "timestamp": "2026-06-24T10:00:26.564Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-5n9kv62d9",
+      "timestamp": "2026-06-24T10:00:26.242Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-mbtrn6fbq",
+      "timestamp": "2026-06-24T10:00:26.222Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-1pt7weqqd",
+      "timestamp": "2026-06-24T10:00:25.981Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-rowacg9mz",
+      "timestamp": "2026-06-24T10:00:25.517Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-gh2u24n7s",
+      "timestamp": "2026-06-24T10:00:24.963Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-gjqll0wjq",
+      "timestamp": "2026-06-24T10:00:24.744Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-p3pqud5qs",
+      "timestamp": "2026-06-24T10:00:24.721Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-1hf8v13k4",
+      "timestamp": "2026-06-24T10:00:24.469Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-hzjb67sjq",
+      "timestamp": "2026-06-24T10:00:24.062Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-ohif8zsbj",
+      "timestamp": "2026-06-24T10:00:23.524Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-khdn51hrq",
+      "timestamp": "2026-06-24T10:00:23.294Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-nlxsqr4sy",
+      "timestamp": "2026-06-24T10:00:23.261Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-91vgyp0f5",
+      "timestamp": "2026-06-24T10:00:23.001Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-7ocwbe8im",
+      "timestamp": "2026-06-24T10:00:22.716Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-enme4ahqe",
+      "timestamp": "2026-06-24T10:00:22.066Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-lmyh7ttgk",
+      "timestamp": "2026-06-24T10:00:21.778Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-kwmcu43la",
+      "timestamp": "2026-06-24T10:00:21.742Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-zee7l5x9x",
+      "timestamp": "2026-06-24T10:00:21.478Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-w54v3et15",
+      "timestamp": "2026-06-24T10:00:21.242Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-rzsz4qc3g",
+      "timestamp": "2026-06-24T10:00:20.621Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-93ou6vp5g",
+      "timestamp": "2026-06-24T10:00:20.358Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-hx6nrvj8c",
+      "timestamp": "2026-06-24T10:00:20.307Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-rh8hzwd4n",
+      "timestamp": "2026-06-24T10:00:19.985Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-sz6yqlki1",
+      "timestamp": "2026-06-24T10:00:19.701Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-1zcraw57h",
+      "timestamp": "2026-06-24T10:00:19.088Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-m7fyq8uwh",
+      "timestamp": "2026-06-24T10:00:18.764Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-khbnfmhf9",
+      "timestamp": "2026-06-24T10:00:18.763Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-r47bklry9",
+      "timestamp": "2026-06-24T10:00:18.479Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-0na5jqnju",
+      "timestamp": "2026-06-24T10:00:18.006Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-vj9t8i469",
+      "timestamp": "2026-06-24T10:00:17.481Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-fr3oy3l0u",
+      "timestamp": "2026-06-24T10:00:17.260Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-fwjmdeuw3",
+      "timestamp": "2026-06-24T10:00:17.212Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-zms80yduf",
+      "timestamp": "2026-06-24T10:00:16.963Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-upy576az3",
+      "timestamp": "2026-06-24T10:00:16.583Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-m99xv4923",
+      "timestamp": "2026-06-24T10:00:16.067Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-a3nkq9oxg",
+      "timestamp": "2026-06-24T10:00:15.821Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-sw10yw5q7",
+      "timestamp": "2026-06-24T10:00:15.788Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-clkpyadih",
+      "timestamp": "2026-06-24T10:00:15.518Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-745df1s3v",
+      "timestamp": "2026-06-24T10:00:15.184Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-u6jzbrnfa",
+      "timestamp": "2026-06-24T10:00:14.546Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-3g8taaj09",
+      "timestamp": "2026-06-24T10:00:14.300Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-nzue41vxn",
+      "timestamp": "2026-06-24T10:00:14.265Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-x9291l4lc",
+      "timestamp": "2026-06-24T10:00:13.978Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-azyq6feyd",
+      "timestamp": "2026-06-24T10:00:13.614Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-yarclrue",
+      "timestamp": "2026-06-24T10:00:13.071Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-b91mtayin",
+      "timestamp": "2026-06-24T10:00:12.841Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-7ylhdgcbn",
+      "timestamp": "2026-06-24T10:00:12.825Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-u1bhd7zxv",
+      "timestamp": "2026-06-24T10:00:12.477Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-tfsv0vqlm",
+      "timestamp": "2026-06-24T10:00:12.082Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-umnfgj1x8",
+      "timestamp": "2026-06-24T10:00:11.517Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-drd360mkl",
+      "timestamp": "2026-06-24T10:00:11.398Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-tlm3jmu3i",
+      "timestamp": "2026-06-24T10:00:11.251Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-tyeifcq83",
+      "timestamp": "2026-06-24T10:00:11.225Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-jz3hrxw82",
+      "timestamp": "2026-06-24T10:00:10.977Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-4zdwyjp4p",
+      "timestamp": "2026-06-24T10:00:10.841Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-xnujd4b5d",
+      "timestamp": "2026-06-24T10:00:10.624Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-gkw5rf6lz",
+      "timestamp": "2026-06-24T10:00:10.563Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-99j57g3e9",
+      "timestamp": "2026-06-24T10:00:10.253Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-dj386zj6w",
+      "timestamp": "2026-06-24T10:00:09.999Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-hxbhbhulh",
+      "timestamp": "2026-06-24T10:00:08.643Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-4cdzt0bfi",
+      "timestamp": "2026-06-24T10:00:08.386Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-bbu2l7ywc",
+      "timestamp": "2026-06-24T10:00:08.346Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-9lkmblmfz",
+      "timestamp": "2026-06-24T10:00:07.980Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-6dhyq6yya",
+      "timestamp": "2026-06-24T10:00:07.629Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-lgckhu05t",
+      "timestamp": "2026-06-24T10:00:07.014Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-z5y4a61qp",
+      "timestamp": "2026-06-24T10:00:06.827Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-rtaz7xu85",
+      "timestamp": "2026-06-24T10:00:06.749Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-73ceyyxbm",
+      "timestamp": "2026-06-24T10:00:06.477Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-3wyx338ft",
+      "timestamp": "2026-06-24T10:00:06.184Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-j6bdi5e1e",
+      "timestamp": "2026-06-24T10:00:05.562Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-p589yqvh2",
+      "timestamp": "2026-06-24T10:00:05.324Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-5uzt8gya6",
+      "timestamp": "2026-06-24T10:00:05.268Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-ucbrgda81",
+      "timestamp": "2026-06-24T10:00:04.987Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-wsihqd44t",
+      "timestamp": "2026-06-24T10:00:04.762Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-wlck1d7wu",
+      "timestamp": "2026-06-24T10:00:04.120Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-qc7fm1yn7",
+      "timestamp": "2026-06-24T10:00:03.903Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-rueclp404",
+      "timestamp": "2026-06-24T10:00:03.855Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-jle3z7rm3",
+      "timestamp": "2026-06-24T10:00:03.485Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-lo880kvuz",
+      "timestamp": "2026-06-24T10:00:03.205Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-hr95l5ily",
+      "timestamp": "2026-06-24T10:00:02.563Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-b8zvqbgpw",
+      "timestamp": "2026-06-24T10:00:02.298Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-x0s327ov5",
+      "timestamp": "2026-06-24T10:00:02.296Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-18d86yddh",
+      "timestamp": "2026-06-24T10:00:02.006Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-2lecom9zk",
+      "timestamp": "2026-06-24T10:00:01.690Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-nwd3jbxor",
+      "timestamp": "2026-06-24T10:00:01.060Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-gp85bcb1k",
+      "timestamp": "2026-06-24T10:00:00.788Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-a8hya7x4q",
+      "timestamp": "2026-06-24T10:00:00.754Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-bqc0zu6ha",
+      "timestamp": "2026-06-24T10:00:00.469Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-5yp5yegtp",
+      "timestamp": "2026-06-24T10:00:00.361Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-6vnn2baa3",
+      "timestamp": "2026-06-24T09:59:59.682Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-ikt7cwz5f",
+      "timestamp": "2026-06-24T09:59:59.485Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-znar47wet",
+      "timestamp": "2026-06-24T09:59:59.421Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-s5xxltpfp",
+      "timestamp": "2026-06-24T09:59:59.064Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-dfd2rodx1",
+      "timestamp": "2026-06-24T09:59:58.712Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-x5txnb11g",
+      "timestamp": "2026-06-24T09:59:58.108Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-nvom2c6ig",
+      "timestamp": "2026-06-24T09:59:57.818Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-owv8ushv7",
+      "timestamp": "2026-06-24T09:59:57.787Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-6a830g4py",
+      "timestamp": "2026-06-24T09:59:57.496Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-zrlx6agor",
+      "timestamp": "2026-06-24T09:59:57.266Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-h5ja0rcz9",
+      "timestamp": "2026-06-24T09:59:56.665Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    },
+    {
+      "id": "log-pfkq8jy6l",
+      "timestamp": "2026-06-24T09:59:56.381Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/users/yc745fbf-4076-4767-8919-48227e7ca4b1/challenges"
+    },
+    {
+      "id": "log-25lkd9a2s",
+      "timestamp": "2026-06-24T09:59:56.331Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/challenges"
+    },
+    {
+      "id": "log-5rsp4teyz",
+      "timestamp": "2026-06-24T09:59:55.989Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/feed"
+    },
+    {
+      "id": "log-kx4l1bh8t",
+      "timestamp": "2026-06-24T09:59:55.741Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/system/state"
+    },
+    {
+      "id": "log-aejy0s7v7",
+      "timestamp": "2026-06-24T09:59:55.145Z",
+      "type": "API",
+      "message": "↳ Received request: GET /api/leaderboard"
+    }
+  ]
+}
