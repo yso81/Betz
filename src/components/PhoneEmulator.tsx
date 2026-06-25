@@ -907,7 +907,7 @@ export default function PhoneEmulator({
         y: [0, 1, -1, 1, -1, 0.5, -0.5, 0]
       } : {}}
       transition={{ duration: 0.25 }}
-      className="relative mx-auto w-[360px] h-[720px] rounded-[48px] border-[12px] border-slate-900 bg-slate-800 shadow-xl flex flex-col overflow-hidden ring-4 ring-indigo-500/10"
+      className="relative mx-auto w-[360px] h-[720px] rounded-[48px] border-[12px] border-slate-950 bg-slate-950 shadow-[0_25px_60px_-15px_rgba(99,102,241,0.25)] flex flex-col overflow-hidden ring-4 ring-indigo-500/25 hover:ring-purple-500/30 transition-all duration-300"
     >
       
       {/* Gamified Celebration Overlay */}
@@ -1057,7 +1057,7 @@ export default function PhoneEmulator({
       )}
 
       {/* Screen viewports */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 bg-slate-50">
+      <div className={`flex-1 overflow-y-auto px-4 py-4 transition-all duration-300 ${!currentUser ? 'bg-slate-950 text-slate-100' : 'bg-gradient-to-b from-slate-50 via-slate-50/70 to-indigo-50/30 text-slate-800'}`}>
         
         {/* Error / Success alert toast container */}
         {errorMsg && (
@@ -1225,12 +1225,19 @@ export default function PhoneEmulator({
                     const hasVotedDispute = chk.votes.some(v => v.verifier_id === currentUser.id && v.vote === 'DISPUTED');
                     const isOwnCheckin = chk.user_id === currentUser.id;
 
-                    let statusBadgeColor = 'bg-slate-100 text-amber-700 border border-slate-200';
-                    if (chk.status === 'VERIFIED') statusBadgeColor = 'bg-emerald-50 text-emerald-700 border border-emerald-150';
-                    if (chk.status === 'DISPUTED') statusBadgeColor = 'bg-rose-50 text-rose-700 border border-rose-150';
+                    let statusBadgeColor = 'bg-amber-500/10 text-amber-600 border border-amber-500/20';
+                    let topBorderColor = 'border-t-4 border-t-amber-500';
+                    if (chk.status === 'VERIFIED') {
+                      statusBadgeColor = 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20';
+                      topBorderColor = 'border-t-4 border-t-emerald-500';
+                    }
+                    if (chk.status === 'DISPUTED') {
+                      statusBadgeColor = 'bg-rose-500/10 text-rose-600 border border-rose-500/20';
+                      topBorderColor = 'border-t-4 border-t-rose-500';
+                    }
 
                     return (
-                      <div key={chk.id} className="bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all hover:border-slate-350 shadow-sm">
+                      <div key={chk.id} className={`bg-white border-x border-b border-slate-200/80 rounded-2xl overflow-hidden transition-all hover:border-slate-300 hover:shadow-md shadow-xs ${topBorderColor}`}>
                         {/* Feed Card Author Header */}
                         <div className="p-3 bg-slate-50/50 flex items-center justify-between border-b border-slate-200">
                           <div className="flex items-center gap-2">
@@ -2169,23 +2176,33 @@ export default function PhoneEmulator({
 
       {/* Persistent Bottom Phone Navigation Tabs */}
       {currentUser && (
-        <div className="bg-white border-t border-slate-200/85 p-2 px-3 pb-5 flex items-center justify-around text-slate-400 select-none">
+        <div className="bg-white/95 backdrop-blur-md border-t border-slate-100 p-2 px-3 pb-5 flex items-center justify-around select-none shadow-[0_-8px_30px_rgba(0,0,0,0.03)] relative z-20">
           <button 
             type="button"
             onClick={() => setActiveTab('feed')}
-            className={`flex flex-col items-center gap-0.5 cursor-pointer transition-colors ${activeTab === 'feed' ? 'text-indigo-600 font-semibold' : 'hover:text-slate-650'}`}
+            className={`flex flex-col items-center gap-0.5 cursor-pointer transition-all duration-200 relative ${
+              activeTab === 'feed' ? 'text-cyan-650 scale-105 font-bold' : 'text-slate-400 hover:text-slate-600'
+            }`}
           >
-            <Compass className="w-4 h-4" />
-            <span className="text-[8.5px] font-medium font-sans">Feed</span>
+            <Compass className={`w-4 h-4 transition-transform duration-200 ${activeTab === 'feed' ? 'scale-110 rotate-12' : ''}`} />
+            <span className="text-[8.5px] font-bold font-sans">Feed</span>
+            {activeTab === 'feed' && (
+              <span className="absolute -bottom-1 w-1 h-1 rounded-full bg-cyan-550 shadow-xs animate-ping" />
+            )}
           </button>
 
           <button 
             type="button"
             onClick={() => setActiveTab('challenges')}
-            className={`flex flex-col items-center gap-0.5 cursor-pointer transition-colors ${activeTab === 'challenges' ? 'text-indigo-600 font-semibold' : 'hover:text-slate-650'}`}
+            className={`flex flex-col items-center gap-0.5 cursor-pointer transition-all duration-200 relative ${
+              activeTab === 'challenges' ? 'text-indigo-600 scale-105 font-bold' : 'text-slate-400 hover:text-slate-600'
+            }`}
           >
-            <ListFilter className="w-4 h-4" />
-            <span className="text-[8.5px] font-medium font-sans">Arena</span>
+            <ListFilter className={`w-4 h-4 transition-transform duration-200 ${activeTab === 'challenges' ? 'scale-110' : ''}`} />
+            <span className="text-[8.5px] font-bold font-sans">Arena</span>
+            {activeTab === 'challenges' && (
+              <span className="absolute -bottom-1 w-1 h-1 rounded-full bg-indigo-500 shadow-xs animate-ping" />
+            )}
           </button>
 
           <button 
@@ -2197,28 +2214,43 @@ export default function PhoneEmulator({
                 setSelectedChallengeToSubmit(userChallenges[0].challenge_id);
               }
             }}
-            className={`flex flex-col items-center gap-0.5 cursor-pointer transition-colors ${activeTab === 'submit' ? 'text-indigo-600 font-semibold' : 'hover:text-slate-650'}`}
+            className={`flex flex-col items-center gap-0.5 cursor-pointer transition-all duration-200 relative ${
+              activeTab === 'submit' ? 'text-fuchsia-600 scale-110 font-bold' : 'text-slate-400 hover:text-slate-600'
+            }`}
           >
-            <PlusCircle className="w-5 h-5 text-indigo-600 shrink-0" />
-            <span className="text-[8.5px] font-medium font-sans">File Proof</span>
+            <PlusCircle className={`w-5 h-5 text-fuchsia-550 shrink-0 transition-transform duration-300 ${activeTab === 'submit' ? 'rotate-90 scale-110' : 'group-hover:scale-105'}`} />
+            <span className="text-[8.5px] font-bold font-sans">File Proof</span>
+            {activeTab === 'submit' && (
+              <span className="absolute -bottom-1 w-1 h-1 rounded-full bg-fuchsia-500 shadow-xs animate-ping" />
+            )}
           </button>
 
           <button 
             type="button"
             onClick={() => setActiveTab('rank')}
-            className={`flex flex-col items-center gap-0.5 cursor-pointer transition-colors ${activeTab === 'rank' ? 'text-indigo-600 font-semibold' : 'hover:text-slate-650'}`}
+            className={`flex flex-col items-center gap-0.5 cursor-pointer transition-all duration-200 relative ${
+              activeTab === 'rank' ? 'text-amber-600 scale-105 font-bold' : 'text-slate-400 hover:text-slate-600'
+            }`}
           >
-            <Award className="w-4 h-4" />
-            <span className="text-[8.5px] font-medium font-sans">Rankings</span>
+            <Award className={`w-4 h-4 transition-transform duration-200 ${activeTab === 'rank' ? 'scale-110 -translate-y-0.5' : ''}`} />
+            <span className="text-[8.5px] font-bold font-sans">Rankings</span>
+            {activeTab === 'rank' && (
+              <span className="absolute -bottom-1 w-1 h-1 rounded-full bg-amber-500 shadow-xs animate-ping" />
+            )}
           </button>
 
           <button 
             type="button"
             onClick={() => setActiveTab('profile')}
-            className={`flex flex-col items-center gap-0.5 cursor-pointer transition-colors ${activeTab === 'profile' ? 'text-indigo-600 font-semibold' : 'hover:text-slate-650'}`}
+            className={`flex flex-col items-center gap-0.5 cursor-pointer transition-all duration-200 relative ${
+              activeTab === 'profile' ? 'text-purple-600 scale-105 font-bold' : 'text-slate-400 hover:text-slate-600'
+            }`}
           >
-            <UserIcon className="w-4 h-4" />
-            <span className="text-[8.5px] font-medium font-sans">Hub</span>
+            <UserIcon className={`w-4 h-4 transition-transform duration-200 ${activeTab === 'profile' ? 'scale-110' : ''}`} />
+            <span className="text-[8.5px] font-bold font-sans">Hub</span>
+            {activeTab === 'profile' && (
+              <span className="absolute -bottom-1 w-1 h-1 rounded-full bg-purple-500 shadow-xs" />
+            )}
           </button>
         </div>
       )}

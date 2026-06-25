@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { User, Challenge, UserChallenge, CheckIn, Verification, SystemLog } from '../types.js';
-import { Play, RotateCcw, Database, Terminal, Shield, RefreshCw } from 'lucide-react';
+import { Play, RotateCcw, Database, Terminal, Shield, RefreshCw, Download } from 'lucide-react';
 
 interface SandboxCockpitProps {
   logs: SystemLog[];
@@ -40,14 +40,27 @@ export default function SandboxCockpit({
     }
   };
 
+  const handleDownloadLogs = () => {
+    if (logs.length === 0) return;
+    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(logs, null, 2)
+    )}`;
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute('href', jsonString);
+    downloadAnchor.setAttribute('download', `betz_system_logs_${new Date().toISOString().split('T')[0]}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  };
+
   return (
-    <div className="flex flex-col h-full bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+    <div className="flex flex-col h-full bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm transition-all duration-300">
       {/* Header operations bar */}
-      <div className="p-5 border-b border-slate-200 bg-slate-50/70 flex flex-wrap items-center justify-between gap-4">
+      <div className="p-5 border-b border-slate-200 bg-gradient-to-r from-slate-50/80 to-indigo-50/40 flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            <h2 className="text-sm font-bold text-slate-900 tracking-tight">BETZ Full-Stack Sandbox Engine</h2>
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-md shadow-emerald-500/50" />
+            <h2 className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 tracking-tight">BETZ Full-Stack Sandbox Engine</h2>
           </div>
           <p className="text-xs text-slate-500 font-mono mt-1">Host: 0.0.0.0:3000 | PostgreSQL Relational Model</p>
         </div>
@@ -55,16 +68,16 @@ export default function SandboxCockpit({
         <div className="flex items-center gap-2">
           <button
             onClick={onTriggerClockReset}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg shadow-sm transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold bg-gradient-to-r from-amber-400 to-orange-550 hover:from-amber-500 hover:to-orange-600 text-slate-950 rounded-lg shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer border border-amber-300/30"
             title="Simulates standard midnight cron job verifying submissions and resetting failing player streaks"
           >
-            <Play className="w-3 h-3 fill-current" />
+            <Play className="w-3 h-3 fill-current text-slate-950" />
             Trigger Midnight Sweep
           </button>
           
           <button
             onClick={onResetSandbox}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold bg-white hover:bg-slate-50 text-slate-700 rounded-lg shadow-sm border border-slate-200 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold bg-white hover:bg-slate-50 text-slate-750 rounded-lg shadow-xs border border-slate-200 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
             title="Restores default database seed entries"
           >
             <RotateCcw className="w-3 h-3" />
@@ -75,16 +88,16 @@ export default function SandboxCockpit({
 
       {/* Simulator Switch user panel */}
       <div className="p-4 bg-slate-50/40 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-        <span className="text-xs font-medium text-slate-500">Sandbox Quick-Switch Client Identity:</span>
+        <span className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400">Sandbox Quick-Switch Client Identity:</span>
         <div className="flex items-center gap-1.5">
           {['yannick', 'ryan', 'nathanael'].map((name) => (
             <button
               key={name}
               onClick={() => onUserSelected(name)}
-              className={`px-3 py-1 text-xs rounded-md font-mono transition-all capitalize ${
+              className={`px-3 py-1.5 text-xs rounded-lg font-mono transition-all capitalize hover:scale-105 active:scale-95 ${
                 activeUsername === name 
-                  ? 'bg-indigo-600 text-white font-bold shadow-sm' 
-                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-800'
+                  ? 'bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-bold shadow-md shadow-indigo-600/20 border border-indigo-500/20' 
+                  : 'bg-white text-slate-650 border border-slate-200/80 hover:bg-slate-50 hover:text-slate-800 shadow-2xs'
               }`}
             >
               @{name}
@@ -125,12 +138,24 @@ export default function SandboxCockpit({
           <div className="space-y-2.5 h-full overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-900 pb-2 mb-3">
               <span className="text-slate-550 text-2xs uppercase tracking-wider font-bold">System Stream (Newest first)</span>
-              <button 
-                onClick={onClearLogs}
-                className="text-2xs text-slate-400 hover:text-rose-400 hover:underline cursor-pointer"
-              >
-                Clear Console
-              </button>
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={handleDownloadLogs}
+                  disabled={logs.length === 0}
+                  className="text-2xs text-indigo-400 hover:text-indigo-300 disabled:opacity-30 disabled:pointer-events-none hover:underline cursor-pointer flex items-center gap-1 font-semibold"
+                  title="Download logs in JSON format for external audit"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  Download JSON
+                </button>
+                <span className="text-slate-800 text-2xs select-none">|</span>
+                <button 
+                  onClick={onClearLogs}
+                  className="text-2xs text-slate-400 hover:text-rose-400 hover:underline cursor-pointer"
+                >
+                  Clear Console
+                </button>
+              </div>
             </div>
             {logs.length === 0 ? (
               <p className="text-slate-500 italic">No incoming logs. Perform actions on the simulator to register transactions.</p>

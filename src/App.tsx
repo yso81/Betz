@@ -384,24 +384,24 @@ export default function App() {
   };
 
   return (
-    <div className="bg-[#F8FAFC] text-slate-800 min-h-screen font-sans antialiased flex flex-col justify-between">
+    <div className="bg-gradient-to-br from-slate-50 via-slate-100 to-indigo-50/50 text-slate-800 min-h-screen font-sans antialiased flex flex-col justify-between">
       
       {/* Sandbox Top Branded Masthead */}
-      <header className="px-6 py-4 bg-white border-b border-slate-200 shadow-sm z-10">
+      <header className="px-6 py-4 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-xs z-10 sticky top-0">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-3">
-              <span className="p-2 bg-indigo-600 rounded-xl shadow-md">
+              <span className="p-2 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 rounded-xl shadow-md animate-pulse">
                 <Flame className="w-5 h-5 text-white fill-current" />
               </span>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-lg font-bold text-slate-900 leading-none">BETZ</h1>
-                  <span className="text-[11px] bg-indigo-50 border border-indigo-100 text-indigo-600 px-2.5 py-0.5 rounded font-mono font-medium">
+                  <h1 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 leading-none">BETZ</h1>
+                  <span className="text-[11px] bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-200/60 text-indigo-700 px-2.5 py-0.5 rounded-full font-mono font-bold tracking-wide">
                     Stage 3: Project Charter
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 uppercase tracking-widest mt-1">Team: Yannick Sookree • Ryan Adams Bundhoo • Nathanaël Perraud</p>
+                <p className="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest mt-1">Team: Yannick Sookree • Ryan Adams Bundhoo • Nathanaël Perraud</p>
               </div>
             </div>
           </div>
