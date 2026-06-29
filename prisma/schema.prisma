@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(uuid())
+  username      String          @unique
+  email         String          @unique
+  password_hash String
+  total_xp      Int             @default(0)
+  created_at    DateTime        @default(now())
+  badges        String[]
+  avatar_url    String?
+  
+  challenges    UserChallenge[]
+  created_chals Challenge[]     @relation("Creator")
+  check_ins     CheckIn[]
+  comments      CheckInComment[]
+  verifications Verification[]
+}
+
+model Challenge {
+  id            String          @id @default(uuid())
+  creator_id    String
+  title         String
+  description   String
+  duration_days Int
+  frequency     String          // 'DAILY' | 'WEEKLY'
+  start_date    DateTime
+  created_at    DateTime        @default(now())
+
+  creator       User            @relation("Creator", fields: [creator_id], references: [id])
+  participants  UserChallenge[]
+  check_ins     CheckIn[]
+}
+
+model UserChallenge {
+  user_id        String
+  challenge_id   String
+  joined_at      DateTime @default(now())
+  status         String   // 'ACTIVE' | 'COMPLETED' | 'FAILED'
+  current_streak Int      @default(0)
+  max_streak     Int      @default(0)
+  streak_freezes Int      @default(0)
+
+  user           User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  challenge      Challenge @relation(fields: [challenge_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, challenge_id])
+}
+
+model CheckIn {
+  id              String           @id @default(uuid())
+  user_id         String
+  challenge_id    String
+  media_url       String
+  text_proof      String
+  status          String           // 'PENDING_VERIFICATION' | 'VERIFIED' | 'EXPIRED' | 'DISPUTED'
+  timezone_offset Int
+  created_at      DateTime         @default(now())
+
+  user            User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  challenge       Challenge        @relation(fields: [challenge_id], references: [id], onDelete: Cascade)
+  comments        CheckInComment[]
+  verifications   Verification[]
+}
+
+model CheckInComment {
+  id           String   @id @default(uuid())
+  check_in_id  String
+  user_id      String
+  message      String
+  created_at   DateTime @default(now())
+
+  check_in     CheckIn  @relation(fields: [check_in_id], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Verification {
+  id           String   @id @default(uuid())
+  check_in_id  String
+  verifier_id  String
+  vote         String   // 'APPROVE' | 'DISPUTED'
+  created_at   DateTime @default(now())
+
+  check_in     CheckIn  @relation(fields: [check_in_id], references: [id], onDelete: Cascade)
+  verifier     User     @relation(fields: [verifier_id], references: [id], onDelete: Cascade)
+}
+
+model SystemLog {
+  id        String   @id @default(uuid())
+  timestamp DateTime @default(now())
+  type      String   // 'INFO' | 'API' | 'CRON' | 'SUCCESS' | 'ERROR'
+  message   String
+}
